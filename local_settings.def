@@ -1,0 +1,6 @@
+# This is template for local_settings.py
+
+DEBUG = True
+
+HOST = "localhost"
+PORT = 8080

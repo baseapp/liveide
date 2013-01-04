@@ -1,0 +1,49 @@
+.header-top {
+	height: 100px;
+}
+
+.sidebar {
+	width: 212px; 
+	display: block;	
+	float: left;
+}
+
+.nav .btn {
+	margin-right: 20px;
+}
+
+.navbar-tabs {
+	margin-top: 40px;
+}
+
+.body-main {
+		background:	#999;
+		min-height:	300px;
+		min-width:	600px;
+		position:	absolute;
+		top:		80px;	/* margins in pixels */
+		bottom:		0px;	/* could also use a percent */
+		left:		0px;
+		right:		0px;
+}
+
+#editor { 
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #000;
+    }
+
+pre#editor {
+	padding: 0px;
+
+}    
+
+.ui-layout-pane {
+	padding: 0px;
+	border: none;
+	background-color: #999;
+}
