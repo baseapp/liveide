@@ -1,7 +1,8 @@
 import os 
 import string
 
-from bottle import route, run, template, static_file
+from bottle import route, run, template, static_file, redirect
+from bottleauth import User
 
 import settings
 
@@ -20,10 +21,22 @@ def server_static(path):
 # -- APP ROUTES --
 @route('/')
 def index():
+	user = User()
+	if not user.loggedin:
+		redirect('/login/')
+
 	context = {
 		"static_url": STATIC_URL
 	}
 	return template('layout.tpl', context)
+
+
+@route('/login/')
+def login():
+	context = {
+		"static_url": STATIC_URL
+	}
+	return template('login.tpl', context)
 
 
 run(host = settings.HOST,
