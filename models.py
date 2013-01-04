@@ -10,7 +10,11 @@ class User(goatfish.Model):
         connection = sqlite3.connect(settings.DATABASE)
         indexes = (
             ("email",),
+            ("email", "password"),
         )
+
+    def __unicode__(self):
+        return self.email[0]
 
 
 class Project(goatfish.Model):
@@ -21,6 +25,9 @@ class Project(goatfish.Model):
             ("user",),
             ("title",)
         )
+
+    def __unicode__(self):
+        return self.title[0]
 
 # Create the necessary tables. If they exist, do nothing.
 User.initialize()

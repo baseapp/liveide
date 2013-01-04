@@ -111,7 +111,7 @@ class Model(object):
                     "index_name": table_name + "_" + "_".join(index),
                     "query": " = ? AND ".join(index) + " = ?",
                 }
-            cursor.execute(statement, [parameters[value] for value in index])
+            cursor.execute(statement, [unicode(parameters[value]) for value in index])
 
             # Delete the (now) unnecessary parameters, because the database
             # made sure they match.
@@ -187,7 +187,7 @@ class Model(object):
             # set to None.
             if field_name not in self.__dict__:
                 return
-            values.append(getattr(self, field_name))
+            values.append(unicode(getattr(self, field_name)))
 
         values.insert(0, self.id)
 

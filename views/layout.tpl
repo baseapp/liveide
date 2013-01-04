@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>BaseApp LiveIDE</title>
-    
-        <!-- Bootstrap -->
-        <link href="{{static_url}}/css/bootstrap.css" rel="stylesheet" media="screen">    
-        <link href="{{static_url}}/css/layout.css" rel="stylesheet" media="screen">
-        <link href="{{static_url}}/css/liveide.css" rel="stylesheet" media="screen">
+%def header():
+    <link href="{{static_url}}/css/layout.css" rel="stylesheet" media="screen">
+    <link href="{{static_url}}/css/liveide.css" rel="stylesheet" media="screen">
 
-        <script src="{{static_url}}/js/jquery.js"></script>
-        <script src="{{static_url}}/js/jquery-ui.js"></script>
-        <script src="{{static_url}}/js/bootstrap.js"></script>
-        <script src="{{static_url}}/js/layout.js"></script>
-        <script src="{{static_url}}/js/ace/ace.js"></script>
+    <script src="{{static_url}}/js/jquery.js"></script>
+    <script src="{{static_url}}/js/jquery-ui.js"></script>
+    <script src="{{static_url}}/js/bootstrap.js"></script>
+    <script src="{{static_url}}/js/layout.js"></script>
+    <script src="{{static_url}}/js/ace/ace.js"></script>
 
-        <script src="{{static_url}}/js/custom.js"></script>
-    </head>
+    <script src="{{static_url}}/js/custom.js"></script>
+%end
 
-    <body>
+%def body():
     <div class="header-top">    
         <div class="navbar navbar-fixed-top navbar-inverse row-fluid">
             <div class="sidebar">
@@ -87,6 +81,6 @@
             </div>
         </div>
     </div>        
-        
-    </body>
-</html>
+%end
+
+%include base header=header, body=body, static_url=static_url

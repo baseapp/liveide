@@ -1,46 +1,35 @@
 import os 
 import string
 
-from bottle import route, run, template, static_file, redirect
+from bottle import *
 from bottleauth import User
-
 import settings
-
-
-APP_URL = settings.APP_URL
-APP_PATH = settings.APP_PATH
-STATIC_URL = settings.STATIC_URL
+from controllers.auth import *
 
 
 # -- SERVE STATIC FILES --
 @route('/static/<path:path>')
 def server_static(path):
-	return static_file(path, root=APP_PATH+'/static/')
+	return static_file(path, root=settings.APP_PATH+'/static/')
 
 
 # -- APP ROUTES --
 @route('/')
+@view('layout.tpl')
 def index():
 	user = User()
 	if not user.loggedin:
 		redirect('/login/')
 
-	context = {
-		"static_url": STATIC_URL
+	return {
+		"user": user,
+		"static_url": settings.STATIC_URL
 	}
-	return template('layout.tpl', context)
 
 
-@route('/login/')
-def login():
-	context = {
-		"static_url": STATIC_URL
-	}
-	return template('login.tpl', context)
-
-
-run(host = settings.HOST,
-	port = settings.PORT,
-	debug = settings.DEBUG,
-	reloader = True
-)
+if __name__=="__main__":
+	run(host = settings.HOST,
+		port = settings.PORT,
+		debug = settings.DEBUG,
+		reloader = True
+	)

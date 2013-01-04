@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import time
+from datetime import datetime, timedelta
 
 from bottle import request, response
 
@@ -38,7 +39,7 @@ class User:
                 #                     )
                 # }
                 # self.db.update_user( email , last_login ) #updating last_login
-                self.set_cookie( user['user_id'] )
+                self.set_cookie( user.id )
                 self.loggedin = True
                 self.credentials = user
                 return True
@@ -97,6 +98,7 @@ class User:
         
         uid = request.get_cookie( '__utmb' , secret = self.COOKIE_SECRET_KEY )
         user = self.db.find_one({"id": uid})
+        print user
 
         if user:
             self.loggedin = True
@@ -118,11 +120,11 @@ class User:
                 '__utmb',
                 uid,
                 secret = self.COOKIE_SECRET_KEY,
-                expires = time.time() + ( 3600*24*365 ),
-                domain = '.python.rodriges.org',
+                expires = datetime.now() + timedelta(days=14),
+                #domain = settings.HOST,
                 path = '/'
         )
-        
+
     def remove_cookie( self ):
     
         '''
@@ -133,7 +135,7 @@ class User:
                 '__utmb',
                 '',
                 secret = self.COOKIE_SECRET_KEY,
-                expires = time.time() - ( 3600*24*365 ),
-                domain = '.python.rodriges.org',
+                #expires = time.time() - ( 3600*24*365 ),
+                #domain = settings.HOST,
                 path = '/'
         )
