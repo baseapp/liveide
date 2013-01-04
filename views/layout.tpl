@@ -17,15 +17,45 @@
             <div class="sidebar">
                 <a href="#" class="brand">BaseAPP LiveIDE</a>
             </div>
-            <div class="navbar-inner"> 
+            <div class="liveide-menu navbar-inner">
                     <ul class="nav">
-                        <li class="divider-vertical"></li>
-                        <li><a href="#">File</a></li>
-                        <li class="divider-vertical"></li>
-                        <li><a href="#">Project</a></li>
-                        <li class="divider-vertical"></li>
-                        <li><a href="">Edit</a></li>
-                        <li class="divider-vertical"></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">File</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">New File</a></li>
+                                <li><a href="#">Save</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Close File</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Undo</a></li>
+                                <li><a href="#">Redo</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Cut</a></li>
+                                <li><a href="#">Copy</a></li>
+                                <li><a href="#">Paste</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Find</a></li>
+                                <li><a href="#">Replace</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Project</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Create Project</a></li>
+                                <li><a href="#">Open</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Close Project</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Settings</a></li>
+                            </ul>
+                        </li>
+                        
                         <li><a href="#">Help</a></li>
                         
                         
@@ -51,8 +81,12 @@
 
             </div>
         </div>
-        <div class="navbar navbar-fixed-top navbar-inverse navbar-tabs">
-            <div class="navbar-inner">
+        <div class="liveide-tabs navbar-inverse navbar-tabs">
+            <div class="sidebar">&nbsp;</div>
+            <div class="navbar-inner"> 
+                <ul class="nav nav-tabs tabs-inverse">
+                    <li class="active"><a href="#">Untitled</a></li>
+                </ul>
             </div>
         </div>
     </div>

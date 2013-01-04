@@ -3,7 +3,7 @@
 }
 
 .sidebar {
-	width: 212px; 
+	width: 225px; 
 	display: block;	
 	float: left;
 }
@@ -46,4 +46,18 @@ pre#editor {
 	padding: 0px;
 	border: none;
 	background-color: #999;
+}
+
+.liveide-menu {
+	font-size: 0.8em;
+}
+
+.liveide-tabs {
+	font-size: 0.7em;
+}
+
+.liveide-tabs .navbar-inner {
+	padding: 0px;
+	border-radius: 0px;
+	-webkit-border-radius: 0px;
 }
