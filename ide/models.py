@@ -9,8 +9,8 @@ class User(goatfish.Model):
         # This is so we know where to connect.
         connection = sqlite3.connect(settings.DATABASE)
         indexes = (
-            ("email",),
-            ("email", "password"),
+            #("email",),
+            #("email", "password"),
         )
 
     def __unicode__(self):
@@ -22,8 +22,8 @@ class Project(goatfish.Model):
         # This is so we know where to connect.
         connection = sqlite3.connect(settings.DATABASE)
         indexes = (
-            ("user_id",),
-            ("title",)
+            #("user_id",),
+            #("title",)
         )
 
     def __unicode__(self):

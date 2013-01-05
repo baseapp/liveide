@@ -109,7 +109,7 @@ class Model(object):
         elif index == ["id"]:
             # If the object id is in the parameters, use only that, since it's
             # the fastest thing we can do.
-            statement = """SELECT * FROM %s WHERE uuid=?;""" % table_name
+            statement = """SELECT * FROM %s WHERE id=?;""" % table_name
             cursor.execute(statement, (parameters["id"],))
             del parameters["id"]
         else:

@@ -45,7 +45,7 @@ class User:
                 #                     )
                 # }
                 # self.db.update_user( email , last_login ) #updating last_login
-                self.set_cookie( user.uuid )
+                self.set_cookie( user.id )
                 self.loggedin = True
                 self.credentials = user
                 return True
@@ -103,7 +103,7 @@ class User:
         '''
         
         uid = request.get_cookie( '__utmb' , secret = self.COOKIE_SECRET_KEY )
-        user = self.db.find_one({"uuid": uid})
+        user = self.db.find_one({"id": uid})
 
         if user:
             self.loggedin = True
