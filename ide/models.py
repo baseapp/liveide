@@ -27,7 +27,7 @@ class Project(goatfish.Model):
         )
 
     def __unicode__(self):
-        return self.title[0]
+        return self.title
 
 # Create the necessary tables. If they exist, do nothing.
 User.initialize()

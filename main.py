@@ -9,7 +9,6 @@ from ide.controllers.auth import *
 
 
 bottle.TEMPLATE_PATH.insert(0, "./ide/views/")
-print bottle.TEMPLATE_PATH
 
 
 # -- SERVE STATIC FILES --

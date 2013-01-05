@@ -1,4 +1,10 @@
 # -*- coding: UTF-8 -*-
+#
+# Based on https://github.com/bbrodriges/bottlepy-user-auth
+# Thanks bbrodriges!
+#
+# -----------------------------------------------------------------------------
+
 import time
 from datetime import datetime, timedelta
 
@@ -39,7 +45,7 @@ class User:
                 #                     )
                 # }
                 # self.db.update_user( email , last_login ) #updating last_login
-                self.set_cookie( user.id )
+                self.set_cookie( user.uuid )
                 self.loggedin = True
                 self.credentials = user
                 return True
@@ -97,8 +103,7 @@ class User:
         '''
         
         uid = request.get_cookie( '__utmb' , secret = self.COOKIE_SECRET_KEY )
-        user = self.db.find_one({"id": uid})
-        print user
+        user = self.db.find_one({"uuid": uid})
 
         if user:
             self.loggedin = True

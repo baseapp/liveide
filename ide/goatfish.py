@@ -1,3 +1,13 @@
+# -----------------------------------------------------------------------------
+#
+# Based on https://github.com/stochastic-technologies/goatfish
+# Thanks skorokithakis!
+#
+# Changes are mode to use IDs from DB for items, not UUIDs.
+# Also fixed some coersing to unicode stuff.
+#
+# -----------------------------------------------------------------------------
+
 import pickle
 import sqlite3
 import uuid
@@ -120,7 +130,9 @@ class Model(object):
 
         for id, uuid, data in cursor:
             loaded_dict = cls._serializer.loads(data.encode("utf-8"))
-            loaded_dict["id"] = uuid
+            #loaded_dict["id"] = uuid
+            loaded_dict["id"] = id
+            loaded_dict["uuid"] = uuid
 
             if parameters:
                 # If there are fields left to match, match them.

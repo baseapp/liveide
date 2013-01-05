@@ -27,7 +27,7 @@
 
 		<h2>Debug: users</h2>
 		%for item in users:
-			<p>{{item.email}} / {{item.password}}</p>
+			<p>id: {{item.id}} / email: {{item.email}} / password: {{item.password}}</p>
 		%end
 	</div>
 %end
