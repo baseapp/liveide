@@ -2,4 +2,4 @@
 local_settings.py
 *.db
 .DS_Store
-userdata/*
+ide/userdata/*

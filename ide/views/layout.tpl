@@ -30,10 +30,10 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">File</a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">New File</a></li>
-                                <li><a href="#">Save</a></li>
+                                <li><a href="#" class="liveide-file-new">New File</a></li>
+                                <li><a href="#" class="liveide-file-save">Save</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Close File</a></li>
+                                <li><a href="#" class="liveide-file-close">Close File</a></li>
                             </ul>
                         </li>
                         
@@ -126,7 +126,7 @@
             <div class="css-treeview">
                 <ul>
                     <li>
-                        <input type="checkbox" id="projects-tree-0" checked /><label for="projects-tree-0">Projects</label>
+                        <input type="checkbox" id="projects-tree-0" checked /><label class="liveide-project active" data-id="" for="projects-tree-0">Projects</label>
                         <ul class="liveide-projects-tree">
                             
                         </ul>

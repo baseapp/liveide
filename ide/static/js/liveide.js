@@ -1,11 +1,27 @@
 (function(){
     var LiveIDE = {
         helpers: {
+            /* Appends tree item in projects tree */
             render_project: function (v) {
                 LiveIDE.dom.project.tree.append('<li class="liveide-project" data-id="' + v.id 
                     + '"><input type="checkbox" checked id="project-' + v.id + '" />' 
-                    + '<label for="project-' + v.id + '">' + v.title + '</label><ul></ul></li>');
+                    + '<label for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id + '"></ul></li>');
+            },
+
+            render_file: function (v) {
+                // As file has no ID let assign temprorary one to distinguish it on click
+                v.id = (new Date).getTime();
+
+                if (v.project) {
+                    $(".project-" + v.project).append('<li class="liveide-file" data-id="' + v.id 
+                        + '" data-project="' + v.project + '">' + v.title + '</li>');
+                } else {
+                    LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id 
+                        + '">' + v.title + '</li>');
+                }
             }
+
+            
         },
 
     	init_layout: function () {
@@ -26,11 +42,18 @@
 
     		// Selectors constants
 			this.dom = {
+                file: {
+                    create: $(".liveide-file-new"),
+                    save: $(".liveide-file-save"),
+                    close: $(".liveide-file-close"),
+                    tree_item: ".liveide-file"
+                },
+
 				project: {
                     active: $(".liveide-active-project"),
 					create: $(".liveide-project-new"),
 					tree: $(".liveide-projects-tree"),
-                    tree_item: ".liveide-project",
+                    tree_item: ".liveide-project"
 				}
 			};
     	},
@@ -43,6 +66,36 @@
 
     	init_handlers: function () {
     		var that = this;
+
+            /* File -> New File */
+            this.dom.file.create.on("click", function (e) {
+                e.preventDefault();
+
+                var project = "",
+                    title = prompt('New File name:', 'Untitled');
+
+                // File can be assigned or not assigned to project
+                if (that.active.project)
+                    project = that.active.project.id;
+
+                if (title) {
+                    $.post("/file_create/", {"title": title, "project": project}, function (data) {
+                        var v = $.parseJSON(data);
+
+                        if (v.msg) {
+                            alert(v.msg);
+                            return;
+                        }
+
+                        if (that.active.project) // Push this file to list of project files
+                            that.active.project.files.push(v)
+                        else // ... or, if no project specified - to list of user files not assigned to any project
+                            that.files.push(v);
+
+                        that.helpers.render_file(v);
+                    });
+                }
+            });
 
     		/* Project -> Create Project */
     		this.dom.project.create.on("click", function (e) {
@@ -61,10 +114,41 @@
 
             /* Click on project in tree - Select project as active */
             $(document).on("click", this.dom.project.tree_item, function (e) {
-                e.preventDefault();
+                //e.preventDefault();
 
-                that.active.project = that.projects[$(this).data("id")];
-                that.dom.project.active.html(that.active.project.title);
+                $(that.dom.project.tree_item).removeClass("active");
+                $(that.dom.file.tree_item).removeClass("active");
+                $(this).addClass("active");
+
+                if ($(this).data("id")) {
+                    that.active.project = that.projects[$(this).data("id")];
+                    that.dom.project.active.html(that.active.project.title);
+                } else {
+                    // Root Projects tree item - mean no active project
+                    that.active.project = null;
+                    that.dom.project.active.html("");
+                }
+            });
+
+            /* Click on file in tree - Open file */
+            $(document).on("click", this.dom.file.tree_item, function (e) {
+                //e.preventDefault();
+
+                $(that.dom.project.tree_item).removeClass("active");
+                $(that.dom.file.tree_item).removeClass("active");
+                $(this).addClass("active");
+
+                if ($(this).data("project")) {
+                    that.active.project = that.projects[$(this).data("project")];
+                    that.dom.project.active.html(that.active.project.title);
+
+                    // TODO that.active.file = that.active.project.files[$(this).data("id")];
+                } else {
+                    that.active.project = null;
+                    that.dom.project.active.html("");
+
+                    // TODO that.active.file = that.files[$(this).data("id")];
+                }
             });
     	},
 
@@ -75,6 +159,20 @@
                 $.each(data, function (i, v) {
                     that.projects[v.id] = v;
                     that.helpers.render_project(v);
+                    $.each(v.files, function (i, f) {
+                        that.helpers.render_file({title: f, project: v.id});
+                    });
+                });
+            });
+        },
+
+        load_files: function () {
+            var that = this;
+
+            $.getJSON("/files/", {}, function (data) {
+                $.each(data, function (i, v) {
+                    that.files.push({title: v});
+                    that.helpers.render_file({title: v});
                 });
             });
         },
@@ -85,7 +183,6 @@
     		this.init_layout();
     		this.init_editor();
     		this.init_handlers();
-            this.load_projects();
 
             // Currently active Project / File
             this.active = {
@@ -94,7 +191,13 @@
             };
 
             // Loaded data
+            // User projects
             this.projects = {};
+            // Files without project
+            this.files = [];
+
+            this.load_projects();
+            this.load_files();
     	}
     };
 	

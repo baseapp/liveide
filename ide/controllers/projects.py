@@ -37,4 +37,10 @@ def project_create():
 	if not os.path.exists(item.abs_path()):
 		os.makedirs(item.abs_path())
 
+		try:
+			fo = open(item.abs_path() + "/.liveideproject", "wb")
+			fo.write(item.title)
+		finally:
+			fo.close()
+
 	return json.dumps(item.json())

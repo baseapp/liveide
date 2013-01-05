@@ -1,3 +1,5 @@
+import os
+
 import goatfish
 import sqlite3
 
@@ -29,11 +31,20 @@ class Project(goatfish.Model):
     def __unicode__(self):
         return self.title
 
+    def get_files(self):
+        "Returns list of files in project"
+        f = []
+        for (dirpath, dirname, filenames) in os.walk(self.abs_path()):
+            f.extend(filenames)
+            break
+        return f
+
     def json(self):
         return {
             "id": self.id,
             "title": self.title,
-            "user_id": self.user_id
+            "user_id": self.user_id,
+            "files": self.get_files()
         }
 
     def abs_path(self):

@@ -62,6 +62,11 @@ pre#editor {
 	-webkit-border-radius: 0px;
 }
 
+.liveide-active-project {
+	font-size: 1.2em;
+	color: #fff;
+	padding-top: 8px;
+}
 
 /* Projects tree */
 .css-treeview {
@@ -130,6 +135,10 @@ pre#editor {
 	height: 16px;
 	line-height: 16px;,
 	vertical-align: middle;
+}
+
+.css-treeview .active {
+	color: #fff;
 }
 
 .css-treeview label {
