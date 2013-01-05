@@ -8,7 +8,15 @@
     <script src="{{static_url}}/js/layout.js"></script>
     <script src="{{static_url}}/js/ace/ace.js"></script>
 
-    <script src="{{static_url}}/js/custom.js"></script>
+    <script src="{{static_url}}/js/liveide.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            LiveIDE.init({
+                //
+            });
+        });
+    </script>
 %end
 
 %def body():
@@ -47,7 +55,7 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Project</a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Create Project</a></li>
+                                <li><a href="#" class="liveide-project-new">Create Project</a></li>
                                 <li><a href="#">Open</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">Close Project</a></li>
@@ -78,7 +86,7 @@
                         </li>  -->
                     </ul>
                     <div class="btn-group pull-right">
-                        <a class="btn btn-inverse btn-username" href="#"><i class="icon-user icon-white"></i> {{user.credentials}}</a>
+                        <a class="btn btn-inverse btn-username" href="#"><i class="icon-user icon-white"></i> {{user.email}}</a>
                         <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/logout/">Logout</a></li>
@@ -87,7 +95,7 @@
             </div>
         </div>
         <div class="liveide-tabs navbar-inverse navbar-tabs">
-            <div class="sidebar">&nbsp;</div>
+            <div class="sidebar liveide-active-project">&nbsp;</div>
             <div class="navbar-inner"> 
                 <ul class="nav nav-tabs tabs-inverse">
                     <li class="active"><a href="#">Untitled</a></li>
@@ -115,8 +123,15 @@
             </div>
             -->
 
-            <div class="ba-project-tree">
-                <h3> Project </h3>
+            <div class="css-treeview">
+                <ul>
+                    <li>
+                        <input type="checkbox" id="projects-tree-0" checked /><label for="projects-tree-0">Projects</label>
+                        <ul class="liveide-projects-tree">
+                            
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>        

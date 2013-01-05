@@ -25,6 +25,12 @@ def user_login():
 	return '<meta http-equiv="refresh" content="0;url=/" />'
 
 
+@get('/logout/')
+def user_logout():
+	User().logout()
+	return '<meta http-equiv="refresh" content="0;url=/" />'
+
+
 @get('/signup/')
 @view('signup.tpl')
 def signup():

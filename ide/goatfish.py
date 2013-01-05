@@ -218,6 +218,9 @@ class Model(object):
             object_id = uuid.uuid4().hex
             statement = """INSERT INTO %s ("uuid", "data") VALUES (?, ?)""" % self.__class__.__name__.lower()
             cursor.execute(statement, (object_id, self._serializer.dumps(self.__dict__)))
+
+            self.uuid = object_id
+            object_id = cursor.lastrowid
         else:
             # Temporarily delete the id so it doesn't get stored.
             object_id = self.id

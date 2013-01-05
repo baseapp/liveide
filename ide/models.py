@@ -22,12 +22,19 @@ class Project(goatfish.Model):
         # This is so we know where to connect.
         connection = sqlite3.connect(settings.DATABASE)
         indexes = (
-            ("user",),
+            ("user_id",),
             ("title",)
         )
 
     def __unicode__(self):
         return self.title
+
+    def json(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "user_id": self.user_id
+        }
 
 # Create the necessary tables. If they exist, do nothing.
 User.initialize()

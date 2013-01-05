@@ -1,0 +1,4 @@
+This is default directory for users' projects and files.
+
+For better security consider to change this setting in 
+ide/settings.py `PROJECTS_ROOT`.

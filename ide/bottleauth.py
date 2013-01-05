@@ -107,6 +107,8 @@ class User:
 
         if user:
             self.loggedin = True
+            self.id = user.id
+            self.email = user.email
             self.credentials = user
             return True
             
