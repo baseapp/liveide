@@ -1,3 +1,4 @@
+import os
 import json
 
 from ide.bottle import *
@@ -33,6 +34,7 @@ def project_create():
 	item.save()
 
 	# FS
-	
+	if not os.path.exists(item.abs_path()):
+		os.makedirs(item.abs_path())
 
 	return json.dumps(item.json())

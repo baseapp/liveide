@@ -15,7 +15,7 @@ STATIC_URL = "/static"
 COOKIE_SECRET_KEY = "ds34-er33-wer46-gh76"
 
 # Override this to the safe location for users' files
-PROJECTS_ROOT = os.path.dirname(os.path.abspath(__file__)) + "userdata/"
+PROJECTS_ROOT = os.path.dirname(os.path.abspath(__file__)) + "/userdata/"
 
 # Override settings with local values if present
 try:

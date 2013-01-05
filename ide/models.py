@@ -36,6 +36,9 @@ class Project(goatfish.Model):
             "user_id": self.user_id
         }
 
+    def abs_path(self):
+        return "%s%i/%i" % (settings.PROJECTS_ROOT, self.user_id, self.id)
+
 # Create the necessary tables. If they exist, do nothing.
 User.initialize()
 Project.initialize()
