@@ -1,7 +1,7 @@
-from bottle import *
-from bottleauth import User
-import settings
-import models
+from ide.bottle import *
+from ide.bottleauth import User
+from ide import settings
+from ide import models
 
 
 @get('/login/')

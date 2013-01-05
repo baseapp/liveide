@@ -58,7 +58,6 @@
                         
                         <li><a href="#">Help</a></li>
                         
-                        
                         <!-- <li>
                             <button type="submit" class="btn btn-inverse">
                                 <i class="icon-file icon-white"></i>
@@ -78,7 +77,13 @@
                             </button>                        
                         </li>  -->
                     </ul>
-
+                    <div class="btn-group pull-right">
+                        <a class="btn btn-inverse btn-username" href="#"><i class="icon-user icon-white"></i> {{user.credentials}}</a>
+                        <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/logout/">Logout</a></li>
+                        </ul>
+                    </div>
             </div>
         </div>
         <div class="liveide-tabs navbar-inverse navbar-tabs">

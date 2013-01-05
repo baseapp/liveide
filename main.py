@@ -1,10 +1,15 @@
 import os 
 import string
 
-from bottle import *
-from bottleauth import User
-import settings
-from controllers.auth import *
+from ide import bottle
+from ide.bottle import *
+from ide.bottleauth import User
+from ide import settings
+from ide.controllers.auth import *
+
+
+bottle.TEMPLATE_PATH.insert(0, "./ide/views/")
+print bottle.TEMPLATE_PATH
 
 
 # -- SERVE STATIC FILES --

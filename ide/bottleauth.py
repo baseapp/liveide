@@ -2,10 +2,10 @@
 import time
 from datetime import datetime, timedelta
 
-from bottle import request, response
+from ide.bottle import request, response
 
-import settings
-import models
+from ide import settings
+from ide import models
 
 
 class User:

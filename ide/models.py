@@ -14,7 +14,7 @@ class User(goatfish.Model):
         )
 
     def __unicode__(self):
-        return self.email[0]
+        return self.email
 
 
 class Project(goatfish.Model):
