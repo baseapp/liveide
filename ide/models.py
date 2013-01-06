@@ -1,4 +1,5 @@
 import os
+import uuid
 
 import goatfish
 import sqlite3
@@ -33,9 +34,13 @@ class Project(goatfish.Model):
 
     def get_files(self):
         "Returns list of files in project"
-        f = []
+        f = {}
         for (dirpath, dirname, filenames) in os.walk(self.abs_path()):
-            f.extend(filenames)
+            f = [{
+                "id": uuid.uuid4().hex,
+                "title": x,
+                "project": self.id
+                } for x in filenames]
             break
         return f
 

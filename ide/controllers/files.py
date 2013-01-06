@@ -1,5 +1,6 @@
 import os
 import json
+import uuid
 
 from ide.bottle import *
 from ide.bottleauth import User
@@ -19,10 +20,13 @@ def files_list():
 	user_id = User().id
 	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
 
-	f = []
+	f = {}
 	for (dirpath, dirname, filenames) in os.walk(path):
-	    f.extend(filenames)
-	    break
+		# TODO: consider to read content of file
+		# File ID: uuid.uuid4().hex is one time ID for file
+		# to make it possible to handle it in UI
+		f = [{"id": uuid.uuid4().hex, "title": x} for x in filenames]
+		break
 	
 	return json.dumps(f)
 
@@ -38,26 +42,32 @@ def file_create():
 
 	user_id = User().id
 	title = request.POST.get("title")
-	project = request.POST.get("project")
+	project_id = request.POST.get("project")
 
 	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
-	if project:
-		path += project + "/"
+	if project_id:
+		project = models.Project.find_one({"id": project_id})
+		if project:
+			path += project.title + "/"
 	path += title
 
 	if not os.path.exists(path):
 		try:
 			fo = open(path, "wb")
 			fo.write("")
+		except:
+			return json.dumps({"msg": "Error creating file!"})
 		finally:
 			fo.close()
 
+		# uuid.uuid4().hex is just one time ID for file for UI usage only
 		c = {
+			"id": uuid.uuid4().hex,
 			"title": title,
-			"project": project,
+			"project": project_id,
 			"content": ""
 		}
 
 		return json.dumps(c)
 
-	return json.dumps({"msg": "Error creating file!"})
+	return json.dumps({"msg": "File exists!"})

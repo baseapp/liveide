@@ -1,5 +1,15 @@
+/*
+    LiveIDE
+
+    Online IDE for Python projects.
+    Homepage and documentation: https://github.com/baseapp/liveide/
+
+    Copyright (c) 2013, BaseApp, V. Sergeyev.
+*/
+
 (function(){
     var LiveIDE = {
+        /* DOM manipulation */
         helpers: {
             /* Appends tree item into projects tree */
             render_project: function (v) {
@@ -8,7 +18,7 @@
                     + '<label for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id + '"></ul></li>');
 
                 $.each(v.files, function (i, f) {
-                    LiveIDE.helpers.render_file({title: f, project: v.id});
+                    LiveIDE.helpers.render_file(f);
                 });
             },
 
@@ -19,9 +29,6 @@
 
             /* Appends file item into project tree */
             render_file: function (v) {
-                // As file has no ID let assign temprorary one to distinguish it on click
-                v.id = (new Date).getTime();
-
                 if (v.project) {
                     $(".project-" + v.project).append('<li class="liveide-file" data-id="' + v.id 
                         + '" data-project="' + v.project + '">' + v.title + '</li>');
@@ -32,6 +39,7 @@
             }
         },
 
+        /* Layout.js init and DOM classes for UI controls to use by LiveIDE */
     	init_layout: function () {
     		var that = this;
 
@@ -67,12 +75,15 @@
 			};
     	},
 
+        /* Ace editor init */
     	init_editor: function () {
     		this.editor = ace.edit("editor");
 			this.editor.setTheme("ace/theme/twilight");
 			this.editor.getSession().setMode("ace/mode/python");
     	},
 
+        /* Event handlers bindings */
+        // TODO: consider to move to separate file
     	init_handlers: function () {
     		var that = this;
 
@@ -97,9 +108,9 @@
                         }
 
                         if (that.active.project) // Push this file to list of project files
-                            that.active.project.files.push(v)
+                            that.active.project.files[v.id] = v;
                         else // ... or, if no project specified - to list of user files not assigned to any project
-                            that.files.push(v);
+                            that.files[v.id] = v;
 
                         that.helpers.render_file(v);
                     });
@@ -210,8 +221,8 @@
 
             $.getJSON("/files/", {}, function (data) {
                 $.each(data, function (i, v) {
-                    that.files.push({title: v});
-                    that.helpers.render_file({title: v});
+                    that.files[v.id] = v;
+                    that.helpers.render_file(v);
                 });
             });
         },
@@ -233,7 +244,7 @@
             // User projects
             this.projects = {};
             // Files without project
-            this.files = [];
+            this.files = {};
 
             this.load_projects();
             this.load_files();
