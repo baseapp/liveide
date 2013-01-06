@@ -59,6 +59,7 @@
                                 <li><a href="#">Open</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">Close Project</a></li>
+                                <li><a href="#" class="liveide-project-remove">Remove Project</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">Settings</a></li>
                             </ul>

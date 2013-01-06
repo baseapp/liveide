@@ -251,7 +251,7 @@ class Model(object):
 
         # And delete the rows from all of them.
         for table_name in table_names:
-            statement = """DELETE FROM %s WHERE "uuid" == ?""" % table_name
+            statement = """DELETE FROM %s WHERE "id" == ?""" % table_name
             cursor.execute(statement, (self.id, ))
 
         if commit:

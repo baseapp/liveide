@@ -1,13 +1,23 @@
 (function(){
     var LiveIDE = {
         helpers: {
-            /* Appends tree item in projects tree */
+            /* Appends tree item into projects tree */
             render_project: function (v) {
                 LiveIDE.dom.project.tree.append('<li class="liveide-project" data-id="' + v.id 
                     + '"><input type="checkbox" checked id="project-' + v.id + '" />' 
                     + '<label for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id + '"></ul></li>');
+
+                $.each(v.files, function (i, f) {
+                    LiveIDE.helpers.render_file({title: f, project: v.id});
+                });
             },
 
+            /* Remoes project item from projects tree */
+            remove_project: function (id) {
+                $(".liveide-project[data-id='" + id + "']").remove();
+            },
+
+            /* Appends file item into project tree */
             render_file: function (v) {
                 // As file has no ID let assign temprorary one to distinguish it on click
                 v.id = (new Date).getTime();
@@ -20,8 +30,6 @@
                         + '">' + v.title + '</li>');
                 }
             }
-
-            
         },
 
     	init_layout: function () {
@@ -52,6 +60,7 @@
 				project: {
                     active: $(".liveide-active-project"),
 					create: $(".liveide-project-new"),
+                    remove: $(".liveide-project-remove"),
 					tree: $(".liveide-projects-tree"),
                     tree_item: ".liveide-project"
 				}
@@ -106,11 +115,44 @@
     			if (title) {
     				$.post("/project_create/", {"title": title}, function (data) {
                         var v = $.parseJSON(data);
-                        that.projects[data.id] = v;
+
+                        if (v.msg) {
+                            alert(v.msg);
+                            return;
+                        }
+
+                        that.projects[v.id] = v;
                         that.helpers.render_project(v);
     				});
     			}
     		});
+
+            /* Project -> Remove Project */
+            this.dom.project.remove.on("click", function (e) {
+                e.preventDefault();
+
+                if (that.active.project)
+                    if (confirm("Project and it's files will be vanished. Do you want to continue?")) {
+                        var id = that.active.project.id;
+
+                        $.post("/project_remove/", {"id": id}, function (data) {
+                            var v = $.parseJSON(data);
+
+                            if (v.msg) {
+                                alert(v.msg);
+                                return;
+                            }
+                            
+                            that.projects[id] = null;
+                            that.helpers.remove_project(id);
+
+                            alert("Project removed");
+                        });
+
+                        that.active.project = null;
+                        that.dom.project.active.html("");
+                    }
+            });
 
             /* Click on project in tree - Select project as active */
             $(document).on("click", this.dom.project.tree_item, function (e) {
@@ -159,9 +201,6 @@
                 $.each(data, function (i, v) {
                     that.projects[v.id] = v;
                     that.helpers.render_project(v);
-                    $.each(v.files, function (i, f) {
-                        that.helpers.render_file({title: f, project: v.id});
-                    });
                 });
             });
         },
