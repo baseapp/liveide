@@ -20,6 +20,11 @@
 %end
 
 %def body():
+    <div id="notification-box" class="alert alert-success alert-error hide">
+        <a class="close" href="#" onclick="$('#notification-box').hide();return false;">&times;</a>
+        <p></p>
+    </div>
+
     <div class="header-top">    
         <div class="navbar navbar-fixed-top navbar-inverse row-fluid">
             <div class="sidebar">
@@ -127,7 +132,7 @@
             <div class="css-treeview">
                 <ul>
                     <li>
-                        <input type="checkbox" id="projects-tree-0" checked /><label class="liveide-project active" data-id="" for="projects-tree-0">Projects</label>
+                        <input type="checkbox" id="projects-tree-0" checked /><label class="liveide-project" data-id="" for="projects-tree-0">Projects</label>
                         <ul class="liveide-projects-tree">
                             
                         </ul>

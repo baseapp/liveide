@@ -36,11 +36,13 @@ class Project(goatfish.Model):
         "Returns list of files in project"
         f = {}
         for (dirpath, dirname, filenames) in os.walk(self.abs_path()):
-            f = [{
-                "id": uuid.uuid4().hex,
-                "title": x,
-                "project": self.id
-                } for x in filenames]
+            for x in filenames:
+                fid = uuid.uuid4().hex
+                f[fid] = {
+                    "id": fid,
+                    "title": x,
+                    "project": self.id
+                }
             break
         return f
 

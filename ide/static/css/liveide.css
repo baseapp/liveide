@@ -173,3 +173,20 @@ pre#editor {
 	}
 }
 /* END Projects tree */
+
+#notification-box {
+    position: absolute;
+    top: 1px;
+    left: 25%;
+    width: 50%;
+    float: left;
+    z-index: 1500;
+}
+
+#notification-box p {
+    margin: 0px !important;
+}
+
+.liveide-file {
+	cursor: pointer;
+}

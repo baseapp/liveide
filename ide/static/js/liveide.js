@@ -39,6 +39,17 @@
             }
         },
 
+        /* Show notification box in header */
+        flash: function(msg, err) {
+            if (err)
+                this.dom.alert.addClass("alert-error")
+            else
+                this.dom.alert.removeClass("alert-error");
+
+            this.dom.alert.find("p").html(msg);
+            this.dom.alert.show();
+        },
+
         /* Layout.js init and DOM classes for UI controls to use by LiveIDE */
     	init_layout: function () {
     		var that = this;
@@ -58,6 +69,7 @@
 
     		// Selectors constants
 			this.dom = {
+                alert: $("#notification-box"),
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
@@ -87,6 +99,11 @@
     	init_handlers: function () {
     		var that = this;
 
+            // Hide alert in 10 seconds
+            setInterval(function() {
+                $('#notification-box').fadeOut("slow");
+            }, 10000);
+
             /* File -> New File */
             this.dom.file.create.on("click", function (e) {
                 e.preventDefault();
@@ -103,7 +120,7 @@
                         var v = $.parseJSON(data);
 
                         if (v.msg) {
-                            alert(v.msg);
+                            that.flash(v.msg, true);
                             return;
                         }
 
@@ -128,7 +145,7 @@
                         var v = $.parseJSON(data);
 
                         if (v.msg) {
-                            alert(v.msg);
+                            that.flash(v.msg, true);
                             return;
                         }
 
@@ -150,14 +167,14 @@
                             var v = $.parseJSON(data);
 
                             if (v.msg) {
-                                alert(v.msg);
+                                that.flash(v.msg, true);
                                 return;
                             }
                             
                             that.projects[id] = null;
                             that.helpers.remove_project(id);
 
-                            alert("Project removed");
+                            that.flash("Project removed");
                         });
 
                         that.active.project = null;
@@ -168,10 +185,6 @@
             /* Click on project in tree - Select project as active */
             $(document).on("click", this.dom.project.tree_item, function (e) {
                 //e.preventDefault();
-
-                $(that.dom.project.tree_item).removeClass("active");
-                $(that.dom.file.tree_item).removeClass("active");
-                $(this).addClass("active");
 
                 if ($(this).data("id")) {
                     that.active.project = that.projects[$(this).data("id")];
@@ -187,20 +200,16 @@
             $(document).on("click", this.dom.file.tree_item, function (e) {
                 //e.preventDefault();
 
-                $(that.dom.project.tree_item).removeClass("active");
-                $(that.dom.file.tree_item).removeClass("active");
-                $(this).addClass("active");
-
                 if ($(this).data("project")) {
                     that.active.project = that.projects[$(this).data("project")];
                     that.dom.project.active.html(that.active.project.title);
 
-                    // TODO that.active.file = that.active.project.files[$(this).data("id")];
+                    that.active.file = that.active.project.files[$(this).data("id")];
                 } else {
                     that.active.project = null;
                     that.dom.project.active.html("");
 
-                    // TODO that.active.file = that.files[$(this).data("id")];
+                    that.active.file = that.files[$(this).data("id")];
                 }
             });
     	},
