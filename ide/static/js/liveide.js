@@ -208,12 +208,27 @@
         load_projects: function () {
             var that = this;
 
-            $.getJSON("/projects/", {}, function (data) {
-                $.each(data, function (i, v) {
-                    that.projects[v.id] = v;
-                    that.helpers.render_project(v);
-                });
+            this.dom.project.tree.jstree({
+                "json_data" : {
+                    "ajax" : {
+                        "url" : "/projects/",
+                        "data" : function (v) { 
+                            return { id : v.id }; 
+                        }
+                    }
+                },
+                "plugins" : [ "json_data" ] //, "contextmenu" ]
+            }).bind("open_node.jstree", function (e) {
+                console.log(e);
             });
+
+
+            // $.getJSON("/projects/", {}, function (data) {
+            //     $.each(data, function (i, v) {
+            //         that.projects[v.id] = v;
+            //         that.helpers.render_project(v);
+            //     });
+            // });
         },
 
         load_files: function () {
@@ -247,7 +262,7 @@
             this.files = {};
 
             this.load_projects();
-            this.load_files();
+            //this.load_files();
     	}
     };
 	

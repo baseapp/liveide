@@ -1,9 +1,11 @@
 %def header():
     <link href="{{static_url}}/css/layout.css" rel="stylesheet" media="screen">
+    <link href="{{static_url}}/css/jstree/style.css" rel="stylesheet" media="screen">
     <link href="{{static_url}}/css/liveide.css" rel="stylesheet" media="screen">
 
     <script src="{{static_url}}/js/jquery.js"></script>
     <script src="{{static_url}}/js/jquery-ui.js"></script>
+    <script src="{{static_url}}/js/jquery.jstree.js"></script>
     <script src="{{static_url}}/js/bootstrap.js"></script>
     <script src="{{static_url}}/js/layout.js"></script>
     <script src="{{static_url}}/js/ace/ace.js"></script>
@@ -124,15 +126,7 @@
             </div>
             -->
 
-            <div class="css-treeview">
-                <ul>
-                    <li>
-                        <input type="checkbox" id="projects-tree-0" checked /><label class="liveide-project active" data-id="" for="projects-tree-0">Projects</label>
-                        <ul class="liveide-projects-tree">
-                            
-                        </ul>
-                    </li>
-                </ul>
+            <div class="liveide-projects-tree jstree-default">
             </div>
         </div>
     </div>        

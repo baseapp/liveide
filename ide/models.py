@@ -34,22 +34,32 @@ class Project(goatfish.Model):
 
     def get_files(self):
         "Returns list of files in project"
-        f = {}
+        f = []
         for (dirpath, dirname, filenames) in os.walk(self.abs_path()):
             f = [{
                 "id": uuid.uuid4().hex,
-                "title": x,
-                "project": self.id
+                "rel": "default",
+                "data": {
+                    "title": x,
+                    "attr": {
+                        "data-project": self.id
+                    }
+                }
                 } for x in filenames]
+            #f = filenames
             break
         return f
 
     def json(self):
         return {
             "id": self.id,
-            "title": self.title,
-            "user_id": self.user_id,
-            "files": self.get_files()
+            "data": {
+                "title": self.title
+            },
+            "attr": {
+                "data-id": self.id
+            },
+            "children": self.get_files()
         }
 
     def abs_path(self):
