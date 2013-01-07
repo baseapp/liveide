@@ -120,16 +120,16 @@
         <div class="liveide-tabs navbar-inverse navbar-tabs">
             <div class="sidebar liveide-active-project">&nbsp;</div>
             <div class="navbar-inner"> 
-                <ul class="nav nav-tabs tabs-inverse">
-                    <li class="active"><a href="#">Untitled</a></li>
+                <ul class="nav nav-tabs tabs-inverse liveide-tabs">
+                    <!-- WRAPPER FOR EDITORS' TABS -->
                 </ul>
             </div>
         </div>
     </div>
     <div class="body-main">
         <div class="ui-layout-center">
-            <div class="ui-layout-center">
-                <pre id="editor">print "hello world"</pre>
+            <div class="ui-layout-center liveide-editors">
+                <!-- WRAPPER FOR EDITOR INSTANCES -->
             </div>
             <div class="ui-layout-south"></div>
         </div>
@@ -151,7 +151,7 @@
                     <li>
                         <input type="checkbox" id="projects-tree-0" checked /><label class="liveide-project" data-id="" for="projects-tree-0">Projects</label>
                         <ul class="liveide-projects-tree">
-                            
+                            <!-- WRAPPER FOR FINDER -->
                         </ul>
                     </li>
                 </ul>

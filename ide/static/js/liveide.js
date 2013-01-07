@@ -63,17 +63,22 @@
 				center__childOptions: {
 					south__size : .20 ,	
 					onresize : function() {
-						that.editor.resize();
+                        if (that.active.editor)
+						  that.active.editor.resize();
 					}
 				},
 				onresize : function() {
-					that.editor.resize();
+                    if (that.active.editor)
+					   that.active.editor.resize();
 				}
 			});
 
     		// Selectors constants
 			this.dom = {
-                alert: $("#notification-box"),
+                alert: $("#notification-box"), // Flashing alert box on top
+                editor: "liveide-editor", // ID for ace-editor PRE
+                editors: $(".liveide-editors"), // Wrapper for all editors
+                tabs: $(".liveide-tabs"), // Wrapper for tabs
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
@@ -92,11 +97,41 @@
     	},
 
         /* Ace editor init */
-    	init_editor: function () {
-    		this.editor = ace.edit("editor");
-			this.editor.setTheme("ace/theme/twilight");
-			this.editor.getSession().setMode("ace/mode/python");
+    	add_editor: function (file) {
+            // Param `file` can be empty,
+            // this means file not was saved/don't persists on FS
+            // For those files temp id will be with `-` prefix.
+
+            var id = file ? file.id : "-" + (new Date).getTime(),
+                title = file ? file.title : "Untitled",
+                dom_id = this.dom.editor + id;
+
+            this.dom.editors.append('<pre id="' + dom_id + '"></pre>');
+            this.dom.tabs.find("li").removeClass("active");
+            this.dom.tabs.append('<li class="active" data-id="' + id + '"><a href="#">' + title + '</a></li>');
+
+            this.editors[id] = {
+                id: id,
+                file: file,
+                editor: ace.edit(dom_id),
+            };
+
+			this.editors[id].editor.setTheme("ace/theme/twilight");
+			this.editors[id].editor.getSession().setMode("ace/mode/python");
+
+            this.active.editor = this.editors[id].editor;
+            this.active.editor.resize();
+            this.active.editor.focus();
     	},
+
+        focus_editor: function (id) {
+            this.dom.tabs.find("li").removeClass("active");
+            this.dom.tabs.find("li[data-id='" + id + "']").addClass("active");
+            
+            this.dom.editors.find("pre").hide();
+            $("#" + this.dom.editor + id).show();
+            this.editors[id].editor.focus();
+        },
 
         /* Event handlers bindings */
         // TODO: consider to move to separate file
@@ -204,23 +239,32 @@
             $(document).on("click", this.dom.file.tree_item, function (e) {
                 //e.preventDefault();
 
+                var id = $(this).data("id");
+
                 if ($(this).data("project")) {
                     that.active.project = that.projects[$(this).data("project")];
                     that.dom.project.active.html(that.active.project.title);
 
-                    that.active.file = that.active.project.files[$(this).data("id")];
+                    that.active.file = that.active.project.files[id];
                 } else {
                     that.active.project = null;
                     that.dom.project.active.html("");
 
-                    that.active.file = that.files[$(this).data("id")];
+                    that.active.file = that.files[id];
                 }
+
+                if (!that.editors[id])
+                    that.add_editor(that.active.file)
+                else
+                    that.focus_editor(id);
             });
 
-            // $(document).on("contextmenu", this.dom.file.tree_item, function(e){
-            //     $(".liveide-dropdownmenu").dropdown();
-            //     return false;
-            // });
+            /* Click on tab - switch editor */
+            this.dom.tabs.on("click", "li", function(e) {
+                e.preventDefault();
+
+                that.focus_editor($(this).data("id"));
+            });
     	},
 
         load_projects: function () {
@@ -248,14 +292,18 @@
     	init: function (params) {
             //$.ajaxSetup({ cache:false });
 
+            // Open ace editor instances
+            // hash key is ID of open file
+            this.editors = {};
+
     		this.init_layout();
-    		this.init_editor();
     		this.init_handlers();
 
             // Currently active Project / File
             this.active = {
                 project: "",
-                file: ""
+                file: "",
+                editor: null
             };
 
             // Loaded data
@@ -266,6 +314,8 @@
 
             this.load_projects();
             this.load_files();
+
+            this.add_editor();
     	}
     };
 	
