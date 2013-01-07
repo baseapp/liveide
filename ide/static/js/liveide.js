@@ -98,12 +98,12 @@
 					south__size : .20 ,	
 					onresize : function() {
                         if (that.active.editor)
-						  that.active.editor.resize();
+						  that.active.editor.editor.resize();
 					}
 				},
 				onresize : function() {
                     if (that.active.editor)
-					   that.active.editor.resize();
+					   that.active.editor.editor.resize();
 				}
 			});
     	},
@@ -127,6 +127,7 @@
 
             this.editors[id] = {
                 id: id,
+                dom_id: dom_id,
                 file: file,
                 editor: ace.edit(dom_id),
             };
@@ -134,8 +135,8 @@
 			this.editors[id].editor.setTheme("ace/theme/twilight");
 			this.editors[id].editor.getSession().setMode("ace/mode/python");
 
-            this.active.editor = this.editors[id].editor;
-            this.active.editor.resize();
+            this.active.editor = this.editors[id];
+            this.active.editor.editor.resize();
 
             this.focus_editor(id);
 
@@ -158,7 +159,7 @@
             $("#" + this.dom.editor + id).show();
             this.editors[id].editor.focus();
 
-            this.active.editor = this.editors[id].editor;
+            this.active.editor = this.editors[id];
 
             if (this.editors[id].file) {
                 // File from FS
@@ -186,6 +187,8 @@
             setInterval(function() {
                 $('#notification-box').fadeOut("slow");
             }, 10000);
+
+            /* -- MENU FILE ------------------------------------------------ */
 
             /* File -> New File */
             this.dom.file.create.on("click", function (e) {
@@ -278,6 +281,29 @@
                         that.active.file = null;
                     });
             });
+
+            /* File -> Close File */
+            this.dom.file.close.on("click", function (e) {
+                e.preventDefault();
+
+                if (that.active.editor) {
+                    // TODO: add check if file was changed
+                    // File can be not saved at all.
+                    // In both cases we loose unsaved data
+
+                    var editor = that.active.editor;
+
+                    $("pre#" + editor.dom_id).remove();
+                    that.dom.tabs.find("li[data-id='" + editor.id + "']").remove();
+                    
+                    that.editors[editor.id] = null;
+
+                    that.active.editor = null;
+                    that.active.file = null;
+                }
+            });
+
+            /* -- MENU PROJECT --------------------------------------------- */
 
     		/* Project -> Create Project */
     		this.dom.project.create.on("click", function (e) {

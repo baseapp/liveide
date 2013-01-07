@@ -50,6 +50,7 @@
 
 .liveide-tabs {
 	font-size: 0.8em;
+	min-height: 37px;
 }
 
 .liveide-tabs .navbar-inner {
