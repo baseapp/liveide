@@ -138,7 +138,6 @@ def file_save():
 	Save file on FS
 	'''
 
-	content = ""
 	user_id = User().id
 	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
 	file_path = request.POST.get("path")

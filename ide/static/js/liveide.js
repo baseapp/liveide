@@ -221,6 +221,28 @@
                 });
             });
 
+            /* File -> Save */
+            this.dom.file.save.on("click", function (e) {
+                e.preventDefault();
+
+                if (that.active.file)
+                    var file = that.active.file,
+                        content = that.editors[file.id].editor.getSession().getValue();
+
+                    $.post("/file_save/", {path: file.path, content: content}, function (data) {
+                        var v = $.parseJSON(data);
+
+                        if (v.msg) {
+                            that.flash(v.msg, true);
+                            return;
+                        }
+                        
+                        file.content = content;
+
+                        that.flash("File saved");
+                    });
+            });
+
             /* File -> Delete File */
             this.dom.file.remove.on("click", function (e) {
                 e.preventDefault();
