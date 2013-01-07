@@ -190,3 +190,8 @@ pre#editor {
 .liveide-file {
 	cursor: pointer;
 }
+
+.liveide-dropdownmenu {
+	position: relative;
+	z-index: 1500;
+}

@@ -5,6 +5,7 @@
     <script src="{{static_url}}/js/jquery.js"></script>
     <script src="{{static_url}}/js/jquery-ui.js"></script>
     <script src="{{static_url}}/js/bootstrap.js"></script>
+    <script src="{{static_url}}/js/bootstrap-contextmenu.js"></script>
     <script src="{{static_url}}/js/layout.js"></script>
     <script src="{{static_url}}/js/ace/ace.js"></script>
 
@@ -25,6 +26,19 @@
         <p></p>
     </div>
 
+    <ul id="liveide-file-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
+        <li><a tabindex="-1" href="#">Rename...</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#">Delete</a></li>
+    </ul>
+
+    <ul id="liveide-project-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
+        <li><a tabindex="-1" href="#">New File</a></li>
+        <li><a tabindex="-1" href="#">Rename...</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#">Delete Project</a></li>
+    </ul>
+    
     <div class="header-top">    
         <div class="navbar navbar-fixed-top navbar-inverse row-fluid">
             <div class="sidebar">
@@ -37,6 +51,8 @@
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="liveide-file-new">New File</a></li>
                                 <li><a href="#" class="liveide-file-save">Save</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#" class="liveide-file-close">Delete File</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-close">Close File</a></li>
                             </ul>
@@ -64,7 +80,8 @@
                                 <li><a href="#">Open</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">Close Project</a></li>
-                                <li><a href="#" class="liveide-project-remove">Remove Project</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#" class="liveide-project-remove">Delete Project</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">Settings</a></li>
                             </ul>

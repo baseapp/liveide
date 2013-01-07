@@ -14,8 +14,10 @@
             /* Appends tree item into projects tree */
             render_project: function (v) {
                 LiveIDE.dom.project.tree.append('<li class="liveide-project" data-id="' + v.id 
-                    + '"><input type="checkbox" checked id="project-' + v.id + '" />' 
+                    + '" data-context-menu="#liveide-project-menu"><input type="checkbox" checked id="project-' + v.id + '" />' 
                     + '<label for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id + '"></ul></li>');
+
+                $(".liveide-project").contextmenu();
 
                 $.each(v.files, function (i, f) {
                     LiveIDE.helpers.render_file(f);
@@ -31,11 +33,13 @@
             render_file: function (v) {
                 if (v.project) {
                     $(".project-" + v.project).append('<li class="liveide-file" data-id="' + v.id 
-                        + '" data-project="' + v.project + '">' + v.title + '</li>');
+                        + '" data-project="' + v.project + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
                 } else {
                     LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id 
-                        + '">' + v.title + '</li>');
+                        + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
                 }
+
+                $(".liveide-file").contextmenu();
             }
         },
 
@@ -212,6 +216,11 @@
                     that.active.file = that.files[$(this).data("id")];
                 }
             });
+
+            // $(document).on("contextmenu", this.dom.file.tree_item, function(e){
+            //     $(".liveide-dropdownmenu").dropdown();
+            //     return false;
+            // });
     	},
 
         load_projects: function () {
