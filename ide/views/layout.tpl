@@ -52,8 +52,9 @@
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="liveide-file-new">New File</a></li>
                                 <li><a href="#" class="liveide-file-save">Save</a></li>
+                                <li><a href="#" class="liveide-file-rename">Rename...</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#" class="liveide-file-close">Delete File</a></li>
+                                <li><a href="#" class="liveide-file-remove">Delete File</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-close">Close File</a></li>
                             </ul>
@@ -78,7 +79,8 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Project</a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="liveide-project-new">Create Project</a></li>
-                                <li><a href="#">Open</a></li>
+                                <li><a href="#">Open...</a></li>
+                                <li><a href="#" class="liveide-project-rename">Rename...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">Close Project</a></li>
                                 <li class="divider"></li>
@@ -88,7 +90,14 @@
                             </ul>
                         </li>
                         
-                        <li><a href="#">Help</a></li>
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Help</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="http://python.org/doc/" target=_blank>Python documentation</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#" class="liveide-about">About LiveIDE</a></li>
+                            </ul>
+                        </li>
                         
                         <!-- <li>
                             <button type="submit" class="btn btn-inverse">

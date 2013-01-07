@@ -81,6 +81,31 @@ def file_create():
 
 
 @login_required
+@post('/file_remove/')
+def file_remove():
+	'''
+	Removes file from FS.
+	NOT REVERTABLE.
+	'''
+
+	user_id = User().id
+	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+	file_path = request.POST.get("path")
+
+	if not file_path:
+		return json.dumps({"msg": "Specify file name!"})
+
+	# Remove on FS
+	if os.path.exists(path + file_path):
+		try:
+			os.remove(path + file_path)
+		except:
+			return json.dumps({"msg": "Removing on FS failed!"})
+
+	return "{}"
+
+
+@login_required
 @get("/file_content/")
 def file_content():
 	'''
@@ -96,7 +121,6 @@ def file_content():
 		return "Specify file name!"
 
 	try:
-		print file_path
 		fo = open(path + file_path, "rb")
 		content = fo.read()
 	except:
@@ -105,3 +129,30 @@ def file_content():
 		fo.close()
 
 	return content
+
+
+@login_required
+@post("/file_save/")
+def file_save():
+	'''
+	Save file on FS
+	'''
+
+	content = ""
+	user_id = User().id
+	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+	file_path = request.POST.get("path")
+	content = request.POST.get("content")
+
+	if not file_path:
+		return json.dumps({"msg": "Specify file name!"})
+
+	try:
+		fo = open(path + file_path, "wb")
+		fo.write(content)
+	except:
+		return json.dumps({"msg": "Error writing file!"})
+	finally:
+		fo.close()
+
+	return "{}"

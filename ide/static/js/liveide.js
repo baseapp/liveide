@@ -9,6 +9,35 @@
 
 (function(){
     var LiveIDE = {
+        /* Constants for DOM selectors */
+        init_dom: function () {
+            this.dom = {
+                alert: $("#notification-box"), // Flashing alert box on top
+                editor: "liveide-editor", // ID for ace-editor PRE
+                editors: $(".liveide-editors"), // Wrapper for all editors
+                tabs: $(".liveide-tabs"), // Wrapper for tabs
+                file: {
+                    create: $(".liveide-file-new"),
+                    save: $(".liveide-file-save"),
+                    close: $(".liveide-file-close"),
+                    remove: $(".liveide-file-remove"),
+                    tree_item: ".liveide-file"
+                },
+
+                project: {
+                    active: $(".liveide-active-project"),
+                    create: $(".liveide-project-new"),
+                    remove: $(".liveide-project-remove"),
+                    tree: $(".liveide-projects-tree"),
+                    tree_item: ".liveide-project"
+                },
+
+                help: {
+                    about: $(".liveide-about")
+                }
+            }
+        },
+
         /* DOM manipulation */
         helpers: {
             /* Appends tree item into projects tree */
@@ -24,7 +53,7 @@
                 });
             },
 
-            /* Remoes project item from projects tree */
+            /* Removes project item from projects tree */
             remove_project: function (id) {
                 $(".liveide-project[data-id='" + id + "']").remove();
             },
@@ -40,7 +69,12 @@
                 }
 
                 $(".liveide-file").contextmenu();
-            }
+            },
+
+            /* Removes file item from projects tree */
+            remove_file: function (id) {
+                $(".liveide-file[data-id='" + id + "']").remove();
+            },
         },
 
         /* Show notification box in header */
@@ -72,28 +106,6 @@
 					   that.active.editor.resize();
 				}
 			});
-
-    		// Selectors constants
-			this.dom = {
-                alert: $("#notification-box"), // Flashing alert box on top
-                editor: "liveide-editor", // ID for ace-editor PRE
-                editors: $(".liveide-editors"), // Wrapper for all editors
-                tabs: $(".liveide-tabs"), // Wrapper for tabs
-                file: {
-                    create: $(".liveide-file-new"),
-                    save: $(".liveide-file-save"),
-                    close: $(".liveide-file-close"),
-                    tree_item: ".liveide-file"
-                },
-
-				project: {
-                    active: $(".liveide-active-project"),
-					create: $(".liveide-project-new"),
-                    remove: $(".liveide-project-remove"),
-					tree: $(".liveide-projects-tree"),
-                    tree_item: ".liveide-project"
-				}
-			};
     	},
 
         /* Ace editor init */
@@ -107,8 +119,10 @@
                 title = file ? file.title : "Untitled",
                 dom_id = this.dom.editor + id;
 
+            if (file && file.project)
+                title += " - " + this.projects[file.project].title;
+
             this.dom.editors.append('<pre id="' + dom_id + '"></pre>');
-            this.dom.tabs.find("li").removeClass("active");
             this.dom.tabs.append('<li class="active" data-id="' + id + '"><a href="#">' + title + '</a></li>');
 
             this.editors[id] = {
@@ -122,7 +136,8 @@
 
             this.active.editor = this.editors[id].editor;
             this.active.editor.resize();
-            this.active.editor.focus();
+
+            this.focus_editor(id);
 
             // Load file content if not loaded yet
             if (file) {
@@ -142,6 +157,24 @@
             this.dom.editors.find("pre").hide();
             $("#" + this.dom.editor + id).show();
             this.editors[id].editor.focus();
+
+            this.active.editor = this.editors[id].editor;
+
+            if (this.editors[id].file) {
+                // File from FS
+                this.active.file = this.editors[id].file;
+                this.active.project = null;
+
+                if (this.active.file.project) {
+                    this.active.project = this.projects[this.active.file.project];
+                    this.dom.project.active.html(this.active.project.title);
+                }
+            } else {
+                // Not persistent on FS file
+                this.active.file = null;
+                this.active.project = null;
+                this.dom.project.active.html("");
+            }
         },
 
         /* Event handlers bindings */
@@ -188,6 +221,42 @@
                 });
             });
 
+            /* File -> Delete File */
+            this.dom.file.remove.on("click", function (e) {
+                e.preventDefault();
+
+                if (that.active.file)
+                    bootbox.confirm(that.active.file.title + " will be vanished. Do you want to continue?", function(result) {
+                        if (!result) return;
+
+                        var file = that.active.file;
+
+                        $("pre#" + that.dom.editor + file.id).remove();
+                        that.dom.tabs.find("li[data-id='" + file.id + "']").remove();
+                        that.editors[file.id] = null;
+
+                        $.post("/file_remove/", {path: file.path}, function (data) {
+                            var v = $.parseJSON(data);
+
+                            if (v.msg) {
+                                that.flash(v.msg, true);
+                                return;
+                            }
+                            
+                            that.helpers.remove_file(file.id);
+                            
+                            if (file.project)
+                                that.projects[file.project].files[file.id] = null
+                            else
+                                that.files[file.id] = null;
+
+                            that.flash("File removed");
+                        });
+
+                        that.active.file = null;
+                    });
+            });
+
     		/* Project -> Create Project */
     		this.dom.project.create.on("click", function (e) {
     			e.preventDefault();
@@ -213,7 +282,7 @@
     			});
     		});
 
-            /* Project -> Remove Project */
+            /* Project -> Delete Project */
             this.dom.project.remove.on("click", function (e) {
                 e.preventDefault();
 
@@ -242,6 +311,15 @@
                     });
             });
 
+            /* Help -> About */
+            this.dom.help.about.on("click", function (e) {
+                e.preventDefault();
+
+                bootbox.alert("BaseApp LiveIDE v.0.01");
+            });
+
+            /* -- DOM ------------------------------------------------------ */
+            
             /* Click on project in tree - Select project as active */
             $(document).on("click", this.dom.project.tree_item, function (e) {
                 //e.preventDefault();
@@ -312,6 +390,8 @@
 
     	init: function (params) {
             //$.ajaxSetup({ cache:false });
+
+            this.init_dom();
 
             // Open ace editor instances
             // hash key is ID of open file
