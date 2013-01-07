@@ -6,6 +6,7 @@
     <script src="{{static_url}}/js/jquery-ui.js"></script>
     <script src="{{static_url}}/js/bootstrap.js"></script>
     <script src="{{static_url}}/js/bootstrap-contextmenu.js"></script>
+    <script src="{{static_url}}/js/bootbox.min.js"></script>
     <script src="{{static_url}}/js/layout.js"></script>
     <script src="{{static_url}}/js/ace/ace.js"></script>
 

@@ -102,7 +102,8 @@
             // this means file not was saved/don't persists on FS
             // For those files temp id will be with `-` prefix.
 
-            var id = file ? file.id : "-" + (new Date).getTime(),
+            var that = this,
+                id = file ? file.id : "-" + (new Date).getTime(),
                 title = file ? file.title : "Untitled",
                 dom_id = this.dom.editor + id;
 
@@ -122,6 +123,16 @@
             this.active.editor = this.editors[id].editor;
             this.active.editor.resize();
             this.active.editor.focus();
+
+            // Load file content if not loaded yet
+            if (file) {
+                if (file.content)
+                    this.editors[id].editor.setValue(file.content)
+                else
+                    $.get("/file_content/", {path: file.path}, function (data) {
+                        that.editors[id].editor.getSession().setValue(data);
+                    });
+            }
     	},
 
         focus_editor: function (id) {
@@ -148,13 +159,17 @@
                 e.preventDefault();
 
                 var project = "",
-                    title = prompt('New File name:', 'Untitled');
+                    title = 'Untitled'; //prompt('New File name:', 'Untitled');
 
-                // File can be assigned or not assigned to project
-                if (that.active.project)
-                    project = that.active.project.id;
+                bootbox.prompt("New file name", function(result) {
+                    if (!result) return;
 
-                if (title) {
+                    title = result;
+
+                    // File can be assigned or not assigned to project
+                    if (that.active.project)
+                        project = that.active.project.id;
+
                     $.post("/file_create/", {"title": title, "project": project}, function (data) {
                         var v = $.parseJSON(data);
 
@@ -170,16 +185,20 @@
 
                         that.helpers.render_file(v);
                     });
-                }
+                });
             });
 
     		/* Project -> Create Project */
     		this.dom.project.create.on("click", function (e) {
     			e.preventDefault();
 
-    			var title = prompt('New project title:', 'Untitled project');
+    			var title = 'Untitled project'; //prompt('New project title:', 'Untitled project');
 
-    			if (title) {
+                bootbox.prompt("New file name", function(result) {                
+                    if (!result) return;
+
+                    title = result;
+
     				$.post("/project_create/", {"title": title}, function (data) {
                         var v = $.parseJSON(data);
 
@@ -191,7 +210,7 @@
                         that.projects[v.id] = v;
                         that.helpers.render_project(v);
     				});
-    			}
+    			});
     		});
 
             /* Project -> Remove Project */
@@ -199,7 +218,9 @@
                 e.preventDefault();
 
                 if (that.active.project)
-                    if (confirm("Project and it's files will be vanished. Do you want to continue?")) {
+                    bootbox.confirm(that.active.project.title + " and it's files will be vanished. Do you want to continue?", function(result) {
+                        if (!result) return;
+
                         var id = that.active.project.id;
 
                         $.post("/project_remove/", {"id": id}, function (data) {
@@ -218,7 +239,7 @@
 
                         that.active.project = null;
                         that.dom.project.active.html("");
-                    }
+                    });
             });
 
             /* Click on project in tree - Select project as active */

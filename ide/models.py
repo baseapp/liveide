@@ -41,7 +41,8 @@ class Project(goatfish.Model):
                 f[fid] = {
                     "id": fid,
                     "title": x,
-                    "project": self.id
+                    "project": self.id,
+                    "path": self.title + "/" + x
                 }
             break
         return f
