@@ -54,7 +54,6 @@
                                 <li><a href="#" class="liveide-file-new">New File</a></li>
                                 <li><a href="#" class="liveide-file-save">Save</a></li>
                                 <li><a href="#" class="liveide-file-save-as">Save as...</a></li>
-                                <li><a href="#" class="liveide-file-rename">Rename...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-remove">Delete File</a></li>
                                 <li class="divider"></li>

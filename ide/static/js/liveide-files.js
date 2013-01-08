@@ -49,12 +49,32 @@
             });
         },
 
+        /* Save new file as... */
+        save_as_new: function (ed, close_on_success) {
+            bootbox.prompt("Save " + ed.title + " as", function(title) {
+                if (!title) return;
+
+                var tab_title,
+                    is_modified = ed.modified ? "*" : "";
+
+                ed.title = title;
+                tab_title = title;
+                if (ed.project)
+                    tab_title += ed.project.title;
+
+                that.dom.tabs.find("li[data-id='" + ed.id + "']").find("a").html(tab_title + " <sup>" + is_modified + '</sup>');
+
+                that.file.save_new(ed, close_on_success);
+            });
+        },
+
         /* Save existing file */
-        save_existing: function (ed, close_on_success) {
+        save_existing: function (ed, close_on_success, new_title) {
             var content = ed.editor.getSession().getValue();
 
-            $.post("/file_save/", {path: ed.file.path, content: content}, function (data) {
-                var v = $.parseJSON(data);
+            $.post("/file_save/", {path: ed.file.path, dir: ed.file.dir, content: content, new_title: new_title}, function (data) {
+                var v = $.parseJSON(data),
+                    tab_title;
 
                 if (v.msg) {
                     that.flash(v.msg, true);
@@ -65,10 +85,30 @@
                 that.dom.tabs.find("li[data-id='" + ed.file.id + "']").find("sup").html("");
                 ed.modified = false;
 
+                // If Save as...
+                if (new_title) {
+                    ed.title = new_title;
+                    ed.file.title = new_title;
+                    tab_title = new_title;
+                    if (ed.project)
+                        tab_title += ed.project.title;
+
+                    that.dom.tabs.find("li[data-id='" + ed.id + "']").find("a").html(tab_title + " <sup></sup>");
+                    $(that.dom.file.tree_item + "[data-id='" + ed.id + "']").html(new_title);
+                }
+
                 that.flash("File saved");
 
                 if (close_on_success)
                     that.file.force_close(ed);
+            });
+        },
+
+        /* Save existing file as... */
+        save_as_existing: function (ed, close_on_success) {
+            bootbox.prompt("Save " + ed.file.title + " as", function(title) {
+                if (!title) return;
+                that.file.save_existing(ed, close_on_success, title);
             });
         },
 

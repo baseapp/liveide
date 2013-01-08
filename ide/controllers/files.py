@@ -1,4 +1,5 @@
 import os
+import shutil
 import json
 import uuid
 
@@ -146,6 +147,10 @@ def file_save():
 	file_path = request.POST.get("path")
 	content = request.POST.get("content")
 
+	# If specified `new_title` - Save as...
+	new_title = request.POST.get("new_title")
+	rel_dir = request.POST.get("dir", "")
+
 	if not file_path:
 		return json.dumps({"msg": "Specify file name!"})
 
@@ -156,5 +161,13 @@ def file_save():
 		return json.dumps({"msg": "Error writing file!"})
 	finally:
 		fo.close()
+
+	# Save as...
+	if new_title:
+		shutil.move(path + file_path, path + rel_dir + "/" + new_title)
+		# try:
+		# 	os.renames(path + file_path, path + rel_dir + "/" + new_title)
+		# except:
+		# 	return json.dumps({"msg": "Error renaming file!"})
 
 	return "{}"

@@ -231,19 +231,27 @@
 
             /* File -> Save */
             this.dom.file.save.on("click", function (e) {
+                var ed = that.active.editor;
+                e.preventDefault();
+                if (!ed) return;
+                
+                if (ed.file) // Existing file modified
+                    that.file.save_existing(ed)
+                else // New file
+                    that.file.save_new(ed);
+            });
+
+            /* File -> Save as ... */
+            this.dom.file.save_as.on("click", function (e) {
                 e.preventDefault();
 
-                if (that.active.editor) {
-                    var ed = that.active.editor,
-                        content;
-                    
-                    content = ed.editor.getSession().getValue();
-
-                    if (ed.file) // Existing file modified
-                        that.file.save_existing(ed)
-                    else // New file
-                        that.file.save_new(ed);
-                }
+                var ed = that.active.editor;
+                if (!ed) return;
+                
+                if (ed.file)
+                    that.file.save_as_existing(ed)
+                else
+                    that.file.save_as_new(ed);
             });
 
             /* File -> Delete File */
