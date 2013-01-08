@@ -11,6 +11,7 @@
     <script src="{{static_url}}/js/ace/ace.js"></script>
 
     <script src="{{static_url}}/js/liveide.js"></script>
+    <script src="{{static_url}}/js/liveide-files.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -52,6 +53,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="liveide-file-new">New File</a></li>
                                 <li><a href="#" class="liveide-file-save">Save</a></li>
+                                <li><a href="#" class="liveide-file-save-as">Save as...</a></li>
                                 <li><a href="#" class="liveide-file-rename">Rename...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-remove">Delete File</a></li>

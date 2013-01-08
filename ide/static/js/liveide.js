@@ -19,6 +19,7 @@
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
+                    save_as: $(".liveide-file-save-as"),
                     close: $(".liveide-file-close"),
                     remove: $(".liveide-file-remove"),
                     tree_item: ".liveide-file"
@@ -199,7 +200,8 @@
 
                 if (ed.project) {
                     this.active.project = this.projects[ed.project];
-                    this.active.dir = this.active.project.title;
+                    if (this.active.project)
+                        this.active.dir = this.active.project.title;
                 }
             }
 
@@ -224,14 +226,7 @@
             /* File -> New File */
             this.dom.file.create.on("click", function (e) {
                 e.preventDefault();
-
-                // var project = "",
-                //     title = 'Untitled'; //prompt('New File name:', 'Untitled');
-
-                bootbox.prompt("New file name", function(title) {
-                    if (!title) return;
-                    that.add_editor(null, title);
-                });
+                that.file.create();
             });
 
             /* File -> Save */
@@ -245,97 +240,22 @@
                     content = ed.editor.getSession().getValue();
 
                     if (ed.file) // Existing file modified
-                        $.post("/file_save/", {path: ed.file.path, content: content}, function (data) {
-                            var v = $.parseJSON(data);
-
-                            if (v.msg) {
-                                that.flash(v.msg, true);
-                                return;
-                            }
-                            
-                            ed.file.content = content;
-                            that.dom.tabs.find("li[data-id='" + ed.file.id + "']").find("sup").html("");
-                            ed.modified = false;
-
-                            that.flash("File saved");
-                        })
+                        that.file.save_existing(ed)
                     else // New file
-                        $.post("/file_create/", {title: ed.title, project: ed.project ? ed.project.id : "", dir: ed.dir, content: content}, function (data) {
-                            var v = $.parseJSON(data);
-
-                            if (v.msg) {
-                                that.flash(v.msg, true);
-                                return;
-                            }
-                            
-                            v.id = ed.id; // this is one time ID, so no matter
-                            ed.file = v;
-                            ed.project = v.project ? that.projects[v.project] : null;
-                            that.dom.tabs.find("li[data-id='" + ed.id + "']").find("sup").html("");
-                            ed.modified = false;
-
-                            that.helpers.render_file(v);
-
-                            that.flash("File saved");
-                        });
+                        that.file.save_new(ed);
                 }
             });
 
             /* File -> Delete File */
             this.dom.file.remove.on("click", function (e) {
                 e.preventDefault();
-
-                if (that.active.file)
-                    bootbox.confirm(that.active.file.title + " will be vanished. Do you want to continue?", function(result) {
-                        if (!result) return;
-
-                        var file = that.active.file;
-
-                        $("pre#" + that.dom.editor + file.id).remove();
-                        that.dom.tabs.find("li[data-id='" + file.id + "']").remove();
-                        that.editors[file.id] = null;
-
-                        $.post("/file_remove/", {path: file.path}, function (data) {
-                            var v = $.parseJSON(data);
-
-                            if (v.msg) {
-                                that.flash(v.msg, true);
-                                return;
-                            }
-                            
-                            that.helpers.remove_file(file.id);
-                            
-                            if (file.project)
-                                that.projects[file.project].files[file.id] = null
-                            else
-                                that.files[file.id] = null;
-
-                            that.flash("File removed");
-                        });
-
-                        that.active.file = null;
-                    });
+                that.file.remove(that.active.file);
             });
 
             /* File -> Close File */
             this.dom.file.close.on("click", function (e) {
                 e.preventDefault();
-
-                if (that.active.editor) {
-                    // TODO: add check if file was changed
-                    // File can be not saved at all.
-                    // In both cases we loose unsaved data
-
-                    var editor = that.active.editor;
-
-                    $("pre#" + editor.dom_id).remove();
-                    that.dom.tabs.find("li[data-id='" + editor.id + "']").remove();
-                    
-                    that.editors[editor.id] = null;
-
-                    that.active.editor = null;
-                    that.active.file = null;
-                }
+                that.file.close(that.active.editor);
             });
 
             /* -- MENU PROJECT --------------------------------------------- */
@@ -429,6 +349,9 @@
                 var id = $(this).data("id"),
                     file;
 
+                $(that.dom.file.tree_item).removeClass("active");
+                $(this).addClass("active");
+
                 if ($(this).data("project")) {
                     that.active.project = that.projects[$(this).data("project")];
                     that.active.dir = that.active.project.title;
@@ -461,6 +384,9 @@
             /* Click on tab - switch editor */
             this.dom.tabs.on("click", "li", function(e) {
                 e.preventDefault();
+
+                $(that.dom.file.tree_item).removeClass("active");
+                $(that.dom.file.tree_item + "[data-id='" + $(this).data("id") + "']").addClass("active");
 
                 that.focus_editor($(this).data("id"));
             });
