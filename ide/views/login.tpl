@@ -20,14 +20,18 @@
 			</p>
 			<p>
 				<input type="submit" class="btn btn-primary" value="Login" />
-				or
-				<a href="/signup/">Sign up</a>
+				%if signup_enabled:
+					or
+					<a href="/signup/">Sign up</a>
+				%end
 			</p>
 		</form>
 
-		<h2>Debug: users</h2>
-		%for item in users:
-			<p>id: {{item.id}} / email: {{item.email}} / password: {{item.password}}</p>
+		%if debug:
+			<h2>Debug: users</h2>
+			%for item in users:
+				<p>id: {{item.id}} / email: {{item.email}} / password: {{item.password}}</p>
+			%end
 		%end
 	</div>
 %end
