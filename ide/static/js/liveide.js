@@ -108,74 +108,105 @@
 			});
     	},
 
-        /* Ace editor init */
-    	add_editor: function (file) {
+        /* Add ace editor instance, open file or given content in it */
+    	add_editor: function (file, title, content) {
             // Param `file` can be empty,
             // this means file not was saved/don't persists on FS
             // For those files temp id will be with `-` prefix.
 
             var that = this,
                 id = file ? file.id : "-" + (new Date).getTime(),
-                title = file ? file.title : "Untitled",
-                dom_id = this.dom.editor + id;
+                title = file ? file.title : title, //"Untitled",
+                dir = file ? file.dir : that.active.dir,
+                dom_id = this.dom.editor + id,
+                tab_title,
+                is_modified = file ? "" : "*",
+                project,
+                ed;
 
+            // Project. For new file project is project active in tree
             if (file && file.project)
-                title += " - " + this.projects[file.project].title;
+                project = this.projects[file.project]
+            else
+                project = that.active.project;
+
+            tab_title = title;
+            if (project)
+                tab_title += " - " + project.title;
 
             this.dom.editors.append('<pre id="' + dom_id + '"></pre>');
-            this.dom.tabs.append('<li class="active" data-id="' + id + '"><a href="#">' + title + '</a></li>');
+            this.dom.tabs.append('<li class="active" data-id="' + id + '"><a href="#">' + tab_title + " <sup>" + is_modified + '</sup></a></li>');
 
-            this.editors[id] = {
+            ed = {
                 id: id,
                 dom_id: dom_id,
+                // file and project - for files already saved on FS
                 file: file,
+                project: project,
+                // title and dir - counts for new file
+                title: title,
+                dir: dir,
+                // ace editor object
                 editor: ace.edit(dom_id),
+                modified: file ? false : true
             };
+            this.editors[id] = ed;
 
-			this.editors[id].editor.setTheme("ace/theme/twilight");
-			this.editors[id].editor.getSession().setMode("ace/mode/python");
+            ed.editor.setValue(content || "");
 
-            this.active.editor = this.editors[id];
-            this.active.editor.editor.resize();
+            ed.editor.getSession().on('change', function(e) {
+                ed.modified = true;
+                that.dom.tabs.find("li[data-id='" + id + "']").find("sup").html("*");
+            });
 
+			ed.editor.setTheme("ace/theme/twilight");
+			ed.editor.getSession().setMode("ace/mode/python");
+            ed.editor.resize();
+
+            // Switch to this editor
+            this.active.editor = ed;
             this.focus_editor(id);
-
-            // Load file content if not loaded yet
-            if (file) {
-                if (file.content)
-                    this.editors[id].editor.setValue(file.content)
-                else
-                    $.get("/file_content/", {path: file.path}, function (data) {
-                        that.editors[id].editor.getSession().setValue(data);
-                    });
-            }
     	},
 
+        /* Activate given editor instance in UI */
         focus_editor: function (id) {
+            var ed = this.editors[id];
+
+            this.active.editor = ed;
+
             this.dom.tabs.find("li").removeClass("active");
             this.dom.tabs.find("li[data-id='" + id + "']").addClass("active");
             
             this.dom.editors.find("pre").hide();
             $("#" + this.dom.editor + id).show();
-            this.editors[id].editor.focus();
+            
+            //ed.editor.focus();
 
-            this.active.editor = this.editors[id];
+            this.active.project = null;
+            this.active.dir = "";
 
-            if (this.editors[id].file) {
+            if (ed.file) {
                 // File from FS
-                this.active.file = this.editors[id].file;
-                this.active.project = null;
+                this.active.file = ed.file;
 
-                if (this.active.file.project) {
-                    this.active.project = this.projects[this.active.file.project];
-                    this.dom.project.active.html(this.active.project.title);
+                if (ed.file.project) {
+                    this.active.project = this.projects[ed.file.project];
+                    this.active.dir = this.active.project.title;
                 }
             } else {
                 // Not persistent on FS file
                 this.active.file = null;
-                this.active.project = null;
-                this.dom.project.active.html("");
+
+                if (ed.project) {
+                    this.active.project = this.projects[ed.project];
+                    this.active.dir = this.active.project.title;
+                }
             }
+
+            if (this.active.project)
+                this.dom.project.active.html(this.active.project.title)
+            else
+                this.dom.project.active.html("");
         },
 
         /* Event handlers bindings */
@@ -194,33 +225,12 @@
             this.dom.file.create.on("click", function (e) {
                 e.preventDefault();
 
-                var project = "",
-                    title = 'Untitled'; //prompt('New File name:', 'Untitled');
+                // var project = "",
+                //     title = 'Untitled'; //prompt('New File name:', 'Untitled');
 
-                bootbox.prompt("New file name", function(result) {
-                    if (!result) return;
-
-                    title = result;
-
-                    // File can be assigned or not assigned to project
-                    if (that.active.project)
-                        project = that.active.project.id;
-
-                    $.post("/file_create/", {"title": title, "project": project}, function (data) {
-                        var v = $.parseJSON(data);
-
-                        if (v.msg) {
-                            that.flash(v.msg, true);
-                            return;
-                        }
-
-                        if (that.active.project) // Push this file to list of project files
-                            that.active.project.files[v.id] = v;
-                        else // ... or, if no project specified - to list of user files not assigned to any project
-                            that.files[v.id] = v;
-
-                        that.helpers.render_file(v);
-                    });
+                bootbox.prompt("New file name", function(title) {
+                    if (!title) return;
+                    that.add_editor(null, title);
                 });
             });
 
@@ -228,22 +238,47 @@
             this.dom.file.save.on("click", function (e) {
                 e.preventDefault();
 
-                if (that.active.file)
-                    var file = that.active.file,
-                        content = that.editors[file.id].editor.getSession().getValue();
+                if (that.active.editor) {
+                    var ed = that.active.editor,
+                        content;
+                    
+                    content = ed.editor.getSession().getValue();
 
-                    $.post("/file_save/", {path: file.path, content: content}, function (data) {
-                        var v = $.parseJSON(data);
+                    if (ed.file) // Existing file modified
+                        $.post("/file_save/", {path: ed.file.path, content: content}, function (data) {
+                            var v = $.parseJSON(data);
 
-                        if (v.msg) {
-                            that.flash(v.msg, true);
-                            return;
-                        }
-                        
-                        file.content = content;
+                            if (v.msg) {
+                                that.flash(v.msg, true);
+                                return;
+                            }
+                            
+                            ed.file.content = content;
+                            that.dom.tabs.find("li[data-id='" + ed.file.id + "']").find("sup").html("");
+                            ed.modified = false;
 
-                        that.flash("File saved");
-                    });
+                            that.flash("File saved");
+                        })
+                    else // New file
+                        $.post("/file_create/", {title: ed.title, project: ed.project ? ed.project.id : "", dir: ed.dir, content: content}, function (data) {
+                            var v = $.parseJSON(data);
+
+                            if (v.msg) {
+                                that.flash(v.msg, true);
+                                return;
+                            }
+                            
+                            v.id = ed.id; // this is one time ID, so no matter
+                            ed.file = v;
+                            ed.project = v.project ? that.projects[v.project] : null;
+                            that.dom.tabs.find("li[data-id='" + ed.id + "']").find("sup").html("");
+                            ed.modified = false;
+
+                            that.helpers.render_file(v);
+
+                            that.flash("File saved");
+                        });
+                }
             });
 
             /* File -> Delete File */
@@ -355,6 +390,7 @@
                         });
 
                         that.active.project = null;
+                        that.active.dir = "";
                         that.dom.project.active.html("");
                     });
             });
@@ -368,41 +404,57 @@
 
             /* -- DOM ------------------------------------------------------ */
             
+            /* Project -> Click */
             /* Click on project in tree - Select project as active */
             $(document).on("click", this.dom.project.tree_item, function (e) {
                 //e.preventDefault();
 
                 if ($(this).data("id")) {
                     that.active.project = that.projects[$(this).data("id")];
+                    that.active.dir = that.active.project.title;
                     that.dom.project.active.html(that.active.project.title);
                 } else {
                     // Root Projects tree item - mean no active project
                     that.active.project = null;
+                    that.active.dir = "";
                     that.dom.project.active.html("");
                 }
             });
 
+            /* File -> Click */
             /* Click on file in tree - Open file */
             $(document).on("click", this.dom.file.tree_item, function (e) {
                 //e.preventDefault();
 
-                var id = $(this).data("id");
+                var id = $(this).data("id"),
+                    file;
 
                 if ($(this).data("project")) {
                     that.active.project = that.projects[$(this).data("project")];
+                    that.active.dir = that.active.project.title;
                     that.dom.project.active.html(that.active.project.title);
 
-                    that.active.file = that.active.project.files[id];
+                    file = that.active.project.files[id];
                 } else {
                     that.active.project = null;
+                    that.active.dir = "";
                     that.dom.project.active.html("");
 
-                    that.active.file = that.files[id];
+                    file = that.files[id];
                 }
 
-                if (!that.editors[id])
-                    that.add_editor(that.active.file)
-                else
+                that.active.file = file;
+                that.active.dir = that.active.file.dir;
+
+                if (!that.editors[id]) {
+                    if (file.content)
+                        that.add_editor(file, file.title, file.content)
+                    else
+                        $.get("/file_content/", {path: file.path}, function (data) {
+                            file.content = data;
+                            that.add_editor(file, file.title, file.content)
+                        })
+                } else
                     that.focus_editor(id);
             });
 
@@ -448,10 +500,17 @@
     		this.init_layout();
     		this.init_handlers();
 
-            // Currently active Project / File
+            // Currently active Project / Dir / File / Editor
             this.active = {
+                // project object, with core dir, ex. "myproject"
                 project: "",
+                // dir is relative path from user root, ex. "myproject",
+                // "myproject/myfolder", "myproject/myfolder/folder2"
+                // dir include active project name too
+                dir: "",
+                // file object
                 file: "",
+                // editor object, ace aditor is `editor` property of editor
                 editor: null
             };
 
@@ -464,7 +523,7 @@
             this.load_projects();
             this.load_files();
 
-            this.add_editor();
+            this.add_editor(null, 'Untitled', 'print "Hello World!"');
     	}
     };
 	

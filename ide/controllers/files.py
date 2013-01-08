@@ -28,7 +28,8 @@ def files_list():
 		f = [{
 			"id": uuid.uuid4().hex,
 			"title": x,
-			"path": x # this is files in user's ROOT so path is filename
+			"path": x, # this is files in user's ROOT so path is filename
+			"dir": ""
 		} for x in filenames]
 
 		break
@@ -44,35 +45,37 @@ def file_create():
 	Creates file on FS.
 	File can be assigned to project or not assigned.
 	'''
+	
+	title = request.POST.get("title")
+	content = request.POST.get("content", "")
+	rel_dir = request.POST.get("dir", "")
+	file_path = rel_dir + "/" + title
 
 	user_id = User().id
-	title = request.POST.get("title")
 	project_id = request.POST.get("project")
 
 	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
-	file_path = ""
+	
 	if project_id:
 		project = models.Project.find_one({"id": project_id})
-		if project:
-			file_path = project.title + "/"
-	file_path += title
 
 	if not os.path.exists(path + file_path):
 		try:
 			fo = open(path + file_path, "wb")
-			fo.write("")
+			fo.write(content)
 		except:
 			return json.dumps({"msg": "Error creating file!"})
 		finally:
 			fo.close()
 
-		# uuid.uuid4().hex is just one time ID for file for UI usage only
+		# uuid.uuid4().hex is just one time ID for file, for UI usage only
 		c = {
 			"id": uuid.uuid4().hex,
 			"title": title,
 			"project": project_id,
-			"content": 'print "Hello World!"',
-			"path": file_path
+			"content": content,
+			"path": file_path,
+			"dir": rel_dir,
 		}
 
 		return json.dumps(c)

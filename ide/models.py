@@ -42,7 +42,8 @@ class Project(goatfish.Model):
                     "id": fid,
                     "title": x,
                     "project": self.id,
-                    "path": self.title + "/" + x
+                    "path": self.title + "/" + x,
+                    "dir": self.title
                 }
             break
         return f
