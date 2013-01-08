@@ -16,13 +16,15 @@
                 editor: "liveide-editor", // ID for ace-editor PRE
                 editors: $(".liveide-editors"), // Wrapper for all editors
                 tabs: $(".liveide-tabs"), // Wrapper for tabs
+                console: $(".liveide-console"),
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
                     save_as: $(".liveide-file-save-as"),
                     close: $(".liveide-file-close"),
                     remove: $(".liveide-file-remove"),
-                    tree_item: ".liveide-file"
+                    tree_item: ".liveide-file",
+                    run: $(".liveide-file-run")
                 },
 
                 project: {
@@ -265,6 +267,12 @@
                 e.preventDefault();
                 that.file.close(that.active.editor);
             });
+
+            /* File -> Run */
+            this.dom.file.run.on("click", function (e) {
+                e.preventDefault();
+                that.file.run(that.active.editor);
+            });            
 
             /* -- MENU PROJECT --------------------------------------------- */
 

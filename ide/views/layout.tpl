@@ -111,13 +111,13 @@
                                 <i class="icon-hdd icon-white"></i>
                                 Save
                             </button>                        
-                        </li>
+                        </li> -->
                         
                         <li>
-                            <button type="submit" class="btn btn-inverse">
+                            <button class="btn btn-inverse liveide-file-run">
                                 <i class="icon-play icon-white"></i> Run
                             </button>                        
-                        </li>  -->
+                        </li>
                     </ul>
                     <div class="btn-group pull-right">
                         <a class="btn btn-inverse btn-username" href="#"><i class="icon-user icon-white"></i> {{user.email}}</a>
@@ -142,21 +142,11 @@
             <div class="ui-layout-center liveide-editors">
                 <!-- WRAPPER FOR EDITOR INSTANCES -->
             </div>
-            <div class="ui-layout-south"></div>
+            <div class="ui-layout-south liveide-console">
+            </div>
         </div>
 
         <div class="ui-layout-west"> 
-
-            <!--<div class="ba-open-files">
-                <h3> Open Files </h3>
-                <ul class="nav nav-pills nav-stacked">
-                    <li>
-                        <a href="#">Filesname.py</a></li>
-                    <li><a href="#">main.py</a></li>
-                </ul>    
-            </div>
-            -->
-
             <div class="css-treeview">
                 <ul>
                     <li>

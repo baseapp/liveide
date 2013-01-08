@@ -23,7 +23,7 @@
         },
 
         /* Save new file */
-        save_new: function (ed, close_on_success) {
+        save_new: function (ed, close_on_success, run_on_success) {
             var content = ed.editor.getSession().getValue();
 
             $.post("/file_create/", {title: ed.title, project: ed.project ? ed.project.id : "", dir: ed.dir, content: content}, function (data) {
@@ -46,6 +46,9 @@
 
                 if (close_on_success)
                     that.file.force_close(ed);
+
+                if (run_on_success)
+                    that.file.force_run(ed);
             });
         },
 
@@ -69,7 +72,7 @@
         },
 
         /* Save existing file */
-        save_existing: function (ed, close_on_success, new_title) {
+        save_existing: function (ed, close_on_success, run_on_success, new_title) {
             var content = ed.editor.getSession().getValue();
 
             $.post("/file_save/", {path: ed.file.path, dir: ed.file.dir, content: content, new_title: new_title}, function (data) {
@@ -101,6 +104,9 @@
 
                 if (close_on_success)
                     that.file.force_close(ed);
+
+                if (run_on_success)
+                    that.file.force_run(ed);
             });
         },
 
@@ -108,7 +114,7 @@
         save_as_existing: function (ed, close_on_success) {
             bootbox.prompt("Save " + ed.file.title + " as", function(title) {
                 if (!title) return;
-                that.file.save_existing(ed, close_on_success, title);
+                that.file.save_existing(ed, close_on_success, false, title);
             });
         },
 
@@ -177,6 +183,37 @@
 
             that.active.editor = null;
             that.active.file = null;
+        },
+
+        run: function (editor) {
+            if (!editor) return;
+            
+            if (editor.modified)
+                bootbox.confirm("Save " + editor.title + " before run?", function(result) {
+                    if (!result) {
+                        // Run without saving
+                        if (editor.file) // only if file on FS
+                            that.file.force_run(editor);
+                        return;
+                    }
+
+                    // Run after save succeed
+                    if (editor.file)
+                        that.file.save_existing(editor, false, true)
+                    else
+                        that.file.save_new(editor, false, true);
+                });
+            else
+                that.file.force_run(editor);
+        },
+
+        force_run: function (editor) {
+            if (!editor) return;
+
+            $.get("/file_run/", {path: editor.file.path}, function (data) {
+                    that.dom.console.append("<pre>" + data + "</pre>");
+                    that.flash("Run complete");
+                });
         }
     };    
 

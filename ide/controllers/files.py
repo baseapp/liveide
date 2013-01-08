@@ -2,6 +2,7 @@ import os
 import shutil
 import json
 import uuid
+import subprocess
 
 from ide.bottle import *
 from ide.bottleauth import User
@@ -171,3 +172,39 @@ def file_save():
 		# 	return json.dumps({"msg": "Error renaming file!"})
 
 	return "{}"
+
+
+@login_required
+@get("/file_run/")
+def file_run():
+	'''
+	Run file with interpreter and return output to UI
+	'''
+
+	user_id = User().id
+	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+	file_path = request.GET.get("path")
+	res = ""
+
+	if not file_path:
+		return "Specify file name!"
+
+	p = subprocess.Popen(
+		('python', '-u', path + file_path, 'x'),
+		stdout=subprocess.PIPE,
+		stderr=subprocess.PIPE
+	)
+
+	output, errors = p.communicate()
+
+	res += output + "\n"
+	res += errors + "\n"
+
+	# while p.poll() == None:
+	# 	data = p.stdout.readline()
+	# 	if data:
+	# 		res += data + "\n"
+
+	res += 'process ended with return code %i' % p.returncode
+
+	return res

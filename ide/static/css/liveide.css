@@ -38,6 +38,16 @@
         background: #000;
     }
 
+.liveide-console {
+	background: #000 !important;
+}
+
+.liveide-console pre {
+	background: #000;
+    color: #fff;
+    border-bottom: 1px solid #fff;
+}
+
 .ui-layout-pane {
 	padding: 0px;
 	border: none;
