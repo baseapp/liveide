@@ -59,14 +59,37 @@
 }
 
 .liveide-tabs {
-	font-size: 0.8em;
-	min-height: 37px;
+	font-size: 0.9em;
+	min-height: 38px;
 }
 
 .liveide-tabs .navbar-inner {
 	padding: 0px;
 	border-radius: 0px;
 	-webkit-border-radius: 0px;
+}
+
+.liveide-tabs .close {
+	color: #999;
+	opacity: 1.0;
+	font-weight: normal;
+	text-shadow: none;
+	position: relative;
+	top: 12px;
+	right: 10px;
+}
+
+.liveide-tabs li.active .close {
+	color: #fff;
+}
+
+.liveide-tabs li a {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-right: 40px;
+	margin-top: 7px;
+	border: 1px solid #333;
+	border-bottom-color: transparent;
 }
 
 .liveide-active-project {

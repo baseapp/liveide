@@ -138,7 +138,7 @@
                 tab_title += " - " + project.title;
 
             this.dom.editors.append('<pre id="' + dom_id + '"></pre>');
-            this.dom.tabs.append('<li class="active" data-id="' + id + '"><a href="#">' + tab_title + " <sup>" + is_modified + '</sup></a></li>');
+            this.dom.tabs.append('<li class="active" data-id="' + id + '"><span class="close" data-id="' + id + '">&times;</span> <a href="#">' + tab_title + " <sup>" + is_modified + '</sup></a></li>');
 
             ed = {
                 id: id,
@@ -405,6 +405,14 @@
                 $(that.dom.file.tree_item + "[data-id='" + $(this).data("id") + "']").addClass("active");
 
                 that.focus_editor($(this).data("id"));
+            });
+
+            /* Click on Close tab - close editor */
+            this.dom.tabs.on("click", ".close", function(e) {
+                e.preventDefault();
+                that.file.close(that.editors[$(this).data("id")]);
+
+                return false; // stop propagating event to underlying el (tab)
             });
     	},
 
