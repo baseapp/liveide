@@ -11,6 +11,7 @@
     <script src="{{static_url}}/js/ace/ace.js"></script>
 
     <script src="{{static_url}}/js/liveide.js"></script>
+    <script src="{{static_url}}/js/liveide-projects.js"></script>
     <script src="{{static_url}}/js/liveide-files.js"></script>
 
     <script>
@@ -29,16 +30,27 @@
     </div>
 
     <ul id="liveide-file-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
-        <li><a tabindex="-1" href="#">Rename...</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-save-as">Rename...</a></li>
         <li class="divider"></li>
-        <li><a tabindex="-1" href="#">Delete</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-remove">Delete</a></li>
     </ul>
 
     <ul id="liveide-project-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
-        <li><a tabindex="-1" href="#">New File</a></li>
-        <li><a tabindex="-1" href="#">Rename...</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-new">New File</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-rename">Rename...</a></li>
         <li class="divider"></li>
-        <li><a tabindex="-1" href="#">Delete Project</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-remove">Delete Project</a></li>
+    </ul>
+
+    <ul id="liveide-folder-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
+        <li><a tabindex="-1" href="#" class="liveide-file-new">New File</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-folder-rename">Rename...</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-folder-remove">Delete Folder</a></li>
     </ul>
     
     <div class="header-top">    
@@ -52,6 +64,7 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">File</a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="liveide-file-new">New File</a></li>
+                                <li><a href="#" class="liveide-folder-new">New Folder</a></li>
                                 <li><a href="#" class="liveide-file-save">Save</a></li>
                                 <li><a href="#" class="liveide-file-save-as">Save as...</a></li>
                                 <li class="divider"></li>

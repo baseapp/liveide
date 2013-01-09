@@ -140,7 +140,7 @@ def file_content():
 @post("/file_save/")
 def file_save():
 	'''
-	Save file on FS
+	Save / Save as... file on FS
 	'''
 
 	user_id = User().id
@@ -165,11 +165,10 @@ def file_save():
 
 	# Save as...
 	if new_title:
-		shutil.move(path + file_path, path + rel_dir + "/" + new_title)
-		# try:
-		# 	os.renames(path + file_path, path + rel_dir + "/" + new_title)
-		# except:
-		# 	return json.dumps({"msg": "Error renaming file!"})
+		try:
+			shutil.move(path + file_path, path + rel_dir + "/" + new_title)
+		except:
+			return json.dumps({"msg": "Error renaming file!"})
 
 	return "{}"
 

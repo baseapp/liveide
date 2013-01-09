@@ -78,3 +78,34 @@ def project_remove():
 
 	return "{}"
 	#return json.dumps({"msg": "Project removed!"})
+
+
+@login_required
+@post('/project_rename/')
+def project_rename():
+	'''
+	Renames (move) project dir and record in DB.
+	'''
+
+	user = User()
+	item = models.Project.find_one({"id": request.POST.get("id")})
+
+	if user.id != item.user_id:
+		return json.dumps({"msg": "User ID not match with project ID!"})
+
+	new_title = request.POST.get("new_title")
+
+	if not new_title:
+		return json.dumps({"msg": "Specify new name for project!"})
+
+	try:
+		path = "%s%i/" % (settings.PROJECTS_ROOT, item.user_id)
+		shutil.move(item.abs_path(), path + new_title)
+	except:
+		return json.dumps({"msg": "Error renaming project!"})
+
+	item.title = new_title
+	item.save()
+
+	return "{}"
+

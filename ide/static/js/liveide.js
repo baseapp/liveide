@@ -30,6 +30,7 @@
                 project: {
                     active: $(".liveide-active-project"),
                     create: $(".liveide-project-new"),
+                    rename: $(".liveide-project-rename"),
                     remove: $(".liveide-project-remove"),
                     tree: $(".liveide-projects-tree"),
                     tree_item: ".liveide-project"
@@ -180,8 +181,8 @@
             this.dom.tabs.find("li").removeClass("active");
             this.dom.tabs.find("li[data-id='" + id + "']").addClass("active");
             
-            this.dom.editors.find("pre").hide();
-            $("#" + this.dom.editor + id).show();
+            this.dom.editors.find("pre").css("z-index", "0");
+            $("#" + this.dom.editor + id).css("z-index", "1");
             
             //ed.editor.focus();
 
@@ -279,27 +280,15 @@
     		/* Project -> Create Project */
     		this.dom.project.create.on("click", function (e) {
     			e.preventDefault();
-
-    			var title = 'Untitled project'; //prompt('New project title:', 'Untitled project');
-
-                bootbox.prompt("New file name", function(result) {                
-                    if (!result) return;
-
-                    title = result;
-
-    				$.post("/project_create/", {"title": title}, function (data) {
-                        var v = $.parseJSON(data);
-
-                        if (v.msg) {
-                            that.flash(v.msg, true);
-                            return;
-                        }
-
-                        that.projects[v.id] = v;
-                        that.helpers.render_project(v);
-    				});
-    			});
+    			that.project.create();
     		});
+
+            /* Project -> Rename... */
+            this.dom.project.rename.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.project)
+                    that.project.rename(that.active.project);
+            });
 
             /* Project -> Delete Project */
             this.dom.project.remove.on("click", function (e) {

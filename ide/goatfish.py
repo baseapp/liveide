@@ -226,7 +226,7 @@ class Model(object):
             object_id = self.id
             del self.id
 
-            statement = """UPDATE %s SET "data" = ? WHERE "uuid" = ?""" % self.__class__.__name__.lower()
+            statement = """UPDATE %s SET "data" = ? WHERE "id" = ?""" % self.__class__.__name__.lower()
             cursor.execute(statement, (self._serializer.dumps(self.__dict__), object_id))
 
         # Restore the id.
