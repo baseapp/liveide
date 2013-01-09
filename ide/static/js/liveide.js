@@ -36,6 +36,10 @@
                     tree_item: ".liveide-project"
                 },
 
+                folder: {
+                    create: $(".liveide-folder-new")
+                },
+
                 help: {
                     about: $(".liveide-about")
                 }
@@ -44,7 +48,9 @@
 
         /* DOM manipulation */
         helpers: {
-            /* Appends tree item into projects tree */
+            // -- PROJECTS TREE -----------------------------------------------
+            
+            /* Appends project */
             render_project: function (v) {
                 LiveIDE.dom.project.tree.append('<li class="liveide-project" data-id="' + v.id 
                     + '" data-context-menu="#liveide-project-menu"><input type="checkbox" checked id="project-' + v.id + '" />' 
@@ -57,12 +63,12 @@
                 });
             },
 
-            /* Removes project item from projects tree */
+            /* Removes project */
             remove_project: function (id) {
                 $(".liveide-project[data-id='" + id + "']").remove();
             },
 
-            /* Appends file item into project tree */
+            /* Appends file */
             render_file: function (v) {
                 if (v.project) {
                     $(".project-" + v.project).append('<li class="liveide-file" data-id="' + v.id 
@@ -75,10 +81,39 @@
                 $(".liveide-file").contextmenu();
             },
 
-            /* Removes file item from projects tree */
+            /* Removes file */
             remove_file: function (id) {
                 $(".liveide-file[data-id='" + id + "']").remove();
             },
+
+            /* Appends folder */
+            render_folder: function (v) {
+                if (v.folder) {
+
+                } else {
+                    $(".project-" + v.project).append('<li class="liveide-folder" data-id="' + v.id 
+                        + '" data-project="' + v.project + '" data-context-menu="#liveide-folder-menu"><input type="checkbox" checked id="folder-' + v.id + '" />'
+                        + '<label for="folder-' + v.id + '">' + v.title + '</label><ul class="folder-' + v.id + '"></ul></li>');
+                }
+
+                $(".liveide-folder").contextmenu();
+            }
+        },
+
+        /* Shorthand for $.post() with alert on error */
+        post: function (url, params, callback) {
+            var that = this;
+
+            $.post(url, params, function (data) {
+                var v = $.parseJSON(data);
+
+                if (v.msg) {
+                    that.flash(v.msg, true);
+                    return;
+                }
+
+                if (callback) callback(v);
+            });
         },
 
         /* Show notification box in header */
@@ -293,33 +328,19 @@
             /* Project -> Delete Project */
             this.dom.project.remove.on("click", function (e) {
                 e.preventDefault();
-
                 if (that.active.project)
-                    bootbox.confirm(that.active.project.title + " and it's files will be vanished. Do you want to continue?", function(result) {
-                        if (!result) return;
-
-                        var id = that.active.project.id;
-
-                        $.post("/project_remove/", {"id": id}, function (data) {
-                            var v = $.parseJSON(data);
-
-                            if (v.msg) {
-                                that.flash(v.msg, true);
-                                return;
-                            }
-                            
-                            that.projects[id] = null;
-                            that.helpers.remove_project(id);
-
-                            that.flash("Project removed");
-                        });
-
-                        that.active.project = null;
-                        that.active.dir = "";
-                        that.dom.project.active.html("");
-                    });
+                    that.project.remove(that.active.project);
             });
 
+            /* New Folder */
+            this.dom.folder.create.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.project)
+                    that.project.create_folder(that.active.project, that.active.dir);
+            });
+
+            /* -- MENU HELP ------------------------------------------------ */
+            
             /* Help -> About */
             this.dom.help.about.on("click", function (e) {
                 e.preventDefault();
@@ -449,6 +470,8 @@
                 dir: "",
                 // file object
                 file: "",
+                // folder object
+                folder: "",
                 // editor object, ace aditor is `editor` property of editor
                 editor: null
             };

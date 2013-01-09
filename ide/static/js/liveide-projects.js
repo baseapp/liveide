@@ -54,6 +54,44 @@
                 });
             });
         },
+
+        /* Delete project */
+        remove: function (project) {
+            if (!project) return;
+
+            bootbox.confirm(project.title + " and it's files will be vanished. Do you want to continue?", function(result) {
+                if (!result) return;
+
+                $.post("/project_remove/", {"id": project.id}, function (data) {
+                    var v = $.parseJSON(data);
+
+                    if (v.msg) {
+                        that.flash(v.msg, true);
+                        return;
+                    }
+                    
+                    that.helpers.remove_project(project.id);
+                    that.projects[project.id] = null;
+
+                    that.flash("Project removed");
+                });
+
+                that.active.project = null;
+                that.active.dir = "";
+                that.dom.project.active.html("");
+            });
+        },
+
+        create_folder: function (project, dir) {
+            bootbox.prompt("New folder name", function(title) {
+                if (!title) return;
+                
+                that.post("/folder_create/", {"id": project.id, "title": title, "dir": dir}, function (v) {
+                    that.helpers.render_folder(v);
+                    that.flash("Folder created");
+                });
+            });
+        },
     }
     
     this.LiveIDE = LiveIDE;

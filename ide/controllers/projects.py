@@ -108,4 +108,3 @@ def project_rename():
 	item.save()
 
 	return "{}"
-
