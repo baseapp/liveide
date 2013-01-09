@@ -37,7 +37,8 @@
                 },
 
                 folder: {
-                    create: $(".liveide-folder-new")
+                    create: $(".liveide-folder-new"),
+                    tree_item: ".liveide-folder"
                 },
 
                 help: {
@@ -58,8 +59,12 @@
 
                 $(".liveide-project").contextmenu();
 
-                $.each(v.files, function (i, f) {
-                    LiveIDE.helpers.render_file(f);
+                v.files = {}; // rels to all files in project
+                $.each(v.tree, function (i, f) {
+                    if (f.is_folder)
+                        LiveIDE.helpers.render_folder(f)
+                    else
+                        LiveIDE.helpers.render_file(f);
                 });
             },
 
@@ -69,9 +74,13 @@
             },
 
             /* Appends file */
-            render_file: function (v) {
+            render_file: function (v, parent) {
                 if (v.project) {
-                    $(".project-" + v.project).append('<li class="liveide-file" data-id="' + v.id 
+                    var root = parent ? $(".folder-" + parent.id) : $(".project-" + v.project);
+
+                    LiveIDE.projects[v.project].files[v.id] = v;
+
+                    root.append('<li class="liveide-file" data-id="' + v.id 
                         + '" data-project="' + v.project + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
                 } else {
                     LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id 
@@ -87,16 +96,20 @@
             },
 
             /* Appends folder */
-            render_folder: function (v) {
-                if (v.folder) {
-
-                } else {
-                    $(".project-" + v.project).append('<li class="liveide-folder" data-id="' + v.id 
-                        + '" data-project="' + v.project + '" data-context-menu="#liveide-folder-menu"><input type="checkbox" checked id="folder-' + v.id + '" />'
+            render_folder: function (v, parent) {
+                var root = parent ? $(".folder-" + parent.id) : $(".project-" + v.project);
+                root.append('<li class="liveide-folder" data-id="' + v.id 
+                        + '" data-project="' + v.project + '" data-path="' + v.path + '" data-context-menu="#liveide-folder-menu"><input type="checkbox" checked id="folder-' + v.id + '" />'
                         + '<label for="folder-' + v.id + '">' + v.title + '</label><ul class="folder-' + v.id + '"></ul></li>');
-                }
-
+                
                 $(".liveide-folder").contextmenu();
+
+                $.each(v.files, function (i, f) {
+                    if (f.is_folder)
+                        LiveIDE.helpers.render_folder(f, v)
+                    else
+                        LiveIDE.helpers.render_file(f, v);
+                });
             }
         },
 
@@ -170,8 +183,8 @@
                 project = that.active.project;
 
             tab_title = title;
-            if (project)
-                tab_title += " - " + project.title;
+            if (file && file.dir)
+                tab_title += " - " + file.dir;
 
             this.dom.editors.append('<pre id="' + dom_id + '"></pre>');
             this.dom.tabs.append('<li class="active" data-id="' + id + '"><span class="close" data-id="' + id + '">&times;</span> <a href="#">' + tab_title + " <sup>" + is_modified + '</sup></a></li>');
@@ -367,6 +380,19 @@
                 }
             });
 
+            /* Folder -> Click */
+            /* Click on folder in tree - Select folder and it's project as active */
+            $(document).on("click", this.dom.folder.tree_item, function (e) {
+                //e.preventDefault();
+                //console.log($(this).data("path"));
+
+                that.active.project = that.projects[$(this).data("project")];
+                that.active.dir = $(this).data("path");
+                that.dom.project.active.html(that.active.project.title);
+
+                return false;
+            });
+
             /* File -> Click */
             /* Click on file in tree - Open file */
             $(document).on("click", this.dom.file.tree_item, function (e) {
@@ -405,6 +431,8 @@
                         })
                 } else
                     that.focus_editor(id);
+
+                return false;
             });
 
             /* Click on tab - switch editor */
