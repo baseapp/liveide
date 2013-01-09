@@ -13,6 +13,7 @@
     <script src="{{static_url}}/js/liveide.js"></script>
     <script src="{{static_url}}/js/liveide-projects.js"></script>
     <script src="{{static_url}}/js/liveide-files.js"></script>
+    <script src="{{static_url}}/js/liveide-handlers.js"></script>
 
     <script>
         $(document).ready(function () {

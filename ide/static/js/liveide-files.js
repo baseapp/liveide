@@ -93,8 +93,8 @@
                     ed.title = new_title;
                     ed.file.title = new_title;
                     tab_title = new_title;
-                    if (ed.project)
-                        tab_title += ed.project.title;
+                    if (ed.file.dir)
+                        tab_title += " - " + ed.file.dir;
 
                     that.dom.tabs.find("li[data-id='" + ed.id + "']").find("a").html(tab_title + " <sup></sup>");
                     $(that.dom.file.tree_item + "[data-id='" + ed.id + "']").html(new_title);

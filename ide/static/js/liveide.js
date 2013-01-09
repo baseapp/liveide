@@ -53,13 +53,14 @@
             
             /* Appends project */
             render_project: function (v) {
-                LiveIDE.dom.project.tree.append('<li class="liveide-project" data-id="' + v.id 
-                    + '" data-context-menu="#liveide-project-menu"><input type="checkbox" checked id="project-' + v.id + '" />' 
-                    + '<label for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id + '"></ul></li>');
+                LiveIDE.dom.project.tree.append('<li class="liveide-project"><input type="checkbox" checked id="project-' + v.id + '" />'
+                    + '<label data-context-menu="#liveide-project-menu" data-id="' + v.id + '" class="project-click" for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id
+                    + '"></ul></li>');
 
-                $(".liveide-project").contextmenu();
+                $(".project-click").contextmenu();
 
                 v.files = {}; // rels to all files in project
+                v.folders = {}; // rels to all folders in project
                 $.each(v.tree, function (i, f) {
                     if (f.is_folder)
                         LiveIDE.helpers.render_folder(f)
@@ -77,6 +78,9 @@
             render_file: function (v, parent) {
                 if (v.project) {
                     var root = parent ? $(".folder-" + parent.id) : $(".project-" + v.project);
+                        //folder_id = parent ? ' data-folder="' + parent.id + '"' : '';
+
+                    if (parent) v.folder = parent;
 
                     LiveIDE.projects[v.project].files[v.id] = v;
 
@@ -98,11 +102,14 @@
             /* Appends folder */
             render_folder: function (v, parent) {
                 var root = parent ? $(".folder-" + parent.id) : $(".project-" + v.project);
-                root.append('<li class="liveide-folder" data-id="' + v.id 
-                        + '" data-project="' + v.project + '" data-path="' + v.path + '" data-context-menu="#liveide-folder-menu"><input type="checkbox" checked id="folder-' + v.id + '" />'
-                        + '<label for="folder-' + v.id + '">' + v.title + '</label><ul class="folder-' + v.id + '"></ul></li>');
+
+                LiveIDE.projects[v.project].folders[v.id] = v;
+
+                root.append('<li class="liveide-folder"><input type="checkbox" checked id="folder-' + v.id + '" />'
+                        + '<label data-context-menu="#liveide-folder-menu" data-id="' + v.id + '" data-project="' + v.project + '" data-path="' + v.path + '" class="folder-click" for="folder-' + v.id + '">'
+                        + v.title + '</label><ul class="folder-' + v.id + '"></ul></li>');
                 
-                $(".liveide-folder").contextmenu();
+                $(".folder-click").contextmenu();
 
                 $.each(v.files, function (i, f) {
                     if (f.is_folder)
@@ -236,6 +243,7 @@
 
             this.active.project = null;
             this.active.dir = "";
+            this.active.folder = null;
 
             if (ed.file) {
                 // File from FS
@@ -243,7 +251,8 @@
 
                 if (ed.file.project) {
                     this.active.project = this.projects[ed.file.project];
-                    this.active.dir = this.active.project.title;
+                    this.active.dir = ed.file.dir;
+                    this.active.folder = ed.file.parent;
                 }
             } else {
                 // Not persistent on FS file
@@ -251,8 +260,10 @@
 
                 if (ed.project) {
                     this.active.project = this.projects[ed.project];
-                    if (this.active.project)
+                    if (this.active.project) {
                         this.active.dir = this.active.project.title;
+                        this.active.folder = null;
+                    }
                 }
             }
 
@@ -365,93 +376,21 @@
             
             /* Project -> Click */
             /* Click on project in tree - Select project as active */
-            $(document).on("click", this.dom.project.tree_item, function (e) {
-                //e.preventDefault();
-
-                if ($(this).data("id")) {
-                    that.active.project = that.projects[$(this).data("id")];
-                    that.active.dir = that.active.project.title;
-                    that.dom.project.active.html(that.active.project.title);
-                } else {
-                    // Root Projects tree item - mean no active project
-                    that.active.project = null;
-                    that.active.dir = "";
-                    that.dom.project.active.html("");
-                }
-            });
+            $(document).on("click", this.dom.project.tree_item + " label.project-click", that.handle.project_click);
 
             /* Folder -> Click */
             /* Click on folder in tree - Select folder and it's project as active */
-            $(document).on("click", this.dom.folder.tree_item, function (e) {
-                //e.preventDefault();
-                //console.log($(this).data("path"));
-
-                that.active.project = that.projects[$(this).data("project")];
-                that.active.dir = $(this).data("path");
-                that.dom.project.active.html(that.active.project.title);
-
-                return false;
-            });
+            $(document).on("click", this.dom.folder.tree_item + " label.folder-click", that.handle.folder_click);
 
             /* File -> Click */
             /* Click on file in tree - Open file */
-            $(document).on("click", this.dom.file.tree_item, function (e) {
-                //e.preventDefault();
-
-                var id = $(this).data("id"),
-                    file;
-
-                $(that.dom.file.tree_item).removeClass("active");
-                $(this).addClass("active");
-
-                if ($(this).data("project")) {
-                    that.active.project = that.projects[$(this).data("project")];
-                    that.active.dir = that.active.project.title;
-                    that.dom.project.active.html(that.active.project.title);
-
-                    file = that.active.project.files[id];
-                } else {
-                    that.active.project = null;
-                    that.active.dir = "";
-                    that.dom.project.active.html("");
-
-                    file = that.files[id];
-                }
-
-                that.active.file = file;
-                that.active.dir = that.active.file.dir;
-
-                if (!that.editors[id]) {
-                    if (file.content)
-                        that.add_editor(file, file.title, file.content)
-                    else
-                        $.get("/file_content/", {path: file.path}, function (data) {
-                            file.content = data;
-                            that.add_editor(file, file.title, file.content)
-                        })
-                } else
-                    that.focus_editor(id);
-
-                return false;
-            });
+            $(document).on("click", this.dom.file.tree_item, that.handle.file_click);
 
             /* Click on tab - switch editor */
-            this.dom.tabs.on("click", "li", function(e) {
-                e.preventDefault();
-
-                $(that.dom.file.tree_item).removeClass("active");
-                $(that.dom.file.tree_item + "[data-id='" + $(this).data("id") + "']").addClass("active");
-
-                that.focus_editor($(this).data("id"));
-            });
+            this.dom.tabs.on("click", "li", that.handle.focus_editor);
 
             /* Click on Close tab - close editor */
-            this.dom.tabs.on("click", ".close", function(e) {
-                e.preventDefault();
-                that.file.close(that.editors[$(this).data("id")]);
-
-                return false; // stop propagating event to underlying el (tab)
-            });
+            this.dom.tabs.on("click", ".close", that.handle.close_editor);
     	},
 
         load_projects: function () {

@@ -39,6 +39,13 @@
 
       if ($this.is('.disabled, :disabled')) return
       
+      if ($this.attr("class") == "project_click")
+        LiveIDE.handle.project_click(e, $this)
+      else if ($this.attr("class") == "folder_click")
+        LiveIDE.handle.folder_click(e, $this)
+      else if ($this.attr("class") == "liveide-file")
+        LiveIDE.handle.file_click(e, $this);
+
       clearMenus()
       $($this.data('context-menu'))
 	.data('e',e)
