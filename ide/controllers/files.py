@@ -204,14 +204,14 @@ def file_run():
 		stderr=subprocess.PIPE
 	)
 
-	while True:
-        nextline = p.stdout.readline()
-        if nextline == '' and p.poll() != None:
-            break
-        yield nextline
+	# while True:
+	# 	nextline = p.stdout.readline()
+ #        if nextline == '' and p.poll() != None:
+ #            break
+ #        yield nextline
 
-    # output = process.communicate()[0]
-    # exitCode = process.returncode
+ #    output = process.communicate()[0]
+ #    exitCode = process.returncode
 
 	output, errors = p.communicate()
 

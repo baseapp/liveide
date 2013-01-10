@@ -58,24 +58,36 @@
 
         /* DOM manipulation */
         helpers: {
+            sort_files: function(a, b) { 
+                return a.title[1] < b.title[1]?1:-1;
+            },
+
             // -- PROJECTS TREE -----------------------------------------------
             
             /* Appends project */
             render_project: function (v) {
+                var folders = [],
+                    files = [],
+                    sort_files = LiveIDE.helpers.sort_files;
+
                 LiveIDE.dom.project.tree.append('<li class="liveide-project"><input type="checkbox" id="project-' + v.id + '" />'
                     + '<label data-context-menu="#liveide-project-menu" data-id="' + v.id + '" class="project-click" for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id
                     + '"></ul></li>');
 
                 $(".project-click").contextmenu();
 
+                // Save links to all files and folders in project files/folders attrs
                 v.files = {}; // rels to all files in project
                 v.folders = {}; // rels to all folders in project
+
+                // Folders to folders, files - to files
                 $.each(v.tree, function (i, f) {
-                    if (f.is_folder)
-                        LiveIDE.helpers.render_folder(f)
-                    else
-                        LiveIDE.helpers.render_file(f);
+                    f.is_folder ? folders.push(f) : files.push(f);
                 });
+                
+                // Sort folders and files then render
+                $.each(folders.sort(sort_files), function (i, f) { LiveIDE.helpers.render_folder(f) });
+                $.each(files.sort(sort_files), function (i, f) { LiveIDE.helpers.render_file(f) });
             },
 
             /* Removes project */
@@ -110,7 +122,10 @@
 
             /* Appends folder */
             render_folder: function (v, parent) {
-                var root = parent ? $(".folder-" + parent.id) : $(".project-" + v.project);
+                var root = parent ? $(".folder-" + parent.id) : $(".project-" + v.project),
+                    folders = [],
+                    files = [],
+                    sort_files = LiveIDE.helpers.sort_files;
 
                 LiveIDE.projects[v.project].folders[v.id] = v;
 
@@ -120,12 +135,14 @@
                 
                 $(".folder-click").contextmenu();
 
+                // Folders to folders, files - to files
                 $.each(v.files, function (i, f) {
-                    if (f.is_folder)
-                        LiveIDE.helpers.render_folder(f, v)
-                    else
-                        LiveIDE.helpers.render_file(f, v);
+                    f.is_folder ? folders.push(f) : files.push(f);
                 });
+                
+                // Sort folders and files then render
+                $.each(folders.sort(sort_files), function (i, f) { LiveIDE.helpers.render_folder(f, v) });
+                $.each(files.sort(sort_files), function (i, f) { LiveIDE.helpers.render_file(f, v) });
             },
 
             /* Removes folder */
