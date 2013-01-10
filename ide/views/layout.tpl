@@ -9,6 +9,7 @@
     <script src="{{static_url}}/js/bootbox.min.js"></script>
     <script src="{{static_url}}/js/layout.js"></script>
     <script src="{{static_url}}/js/ace/ace.js"></script>
+    <script src="{{static_url}}/js/mousetrap.min.js"></script>
 
     <script src="{{static_url}}/js/liveide.js"></script>
     <script src="{{static_url}}/js/liveide-projects.js"></script>

@@ -476,6 +476,7 @@
             /* Click on Close tab - close editor */
             this.dom.tabs.on("click", ".close", that.handle.close_editor);
 
+            /* -- CLIPBOARD ------------------------------------------------ */
             // TODO: find a better way to track Cut event in editor
             $(document).on("cut", ".liveide-editors", function (e) {
                 var t = that.active.editor.editor.getSession().$undoManager.$undoStack;
@@ -486,6 +487,21 @@
             $(document).on("copy", ".liveide-editors", function (e) {
                 that.clipboardData = that.active.editor.editor.getCopyText();
                 //console.log(that.clipboardData);
+            });
+
+            $(document).on("keypress", ".liveide-editors", function (e) {
+                if (!(e.which == 115 && e.ctrlKey) && !(e.which == 19)) return true;
+                
+                var ed = that.active.editor;
+                if (!ed) return;
+                
+                if (ed.file) // Existing file modified
+                    that.file.save_existing(ed)
+                else // New file
+                    that.file.save_new(ed);
+
+                e.preventDefault();
+                return false;
             });
     	},
 
