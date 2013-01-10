@@ -1,10 +1,16 @@
 import os
 import uuid
+import fnmatch
+import re
 
 import goatfish
 import sqlite3
 
 import settings
+
+
+IGNORE_FILES = r'|'.join([fnmatch.translate(x) \
+        for x in settings.IGNORE_FILES]) or r'$.'
 
 
 # joins path and removes trailing slash
@@ -73,6 +79,9 @@ class Project(goatfish.Model):
         res = {}
 
         for item in os.listdir(join(root, cur_dir)):
+            if re.match(IGNORE_FILES, item):
+                continue
+
             if os.path.isdir(join(root, cur_dir, item)):
                 #print "DIR", root, item
                 res = dict(res, **self.dir_obj(item, join(root, cur_dir), self.get_files(join(root, cur_dir), item)))

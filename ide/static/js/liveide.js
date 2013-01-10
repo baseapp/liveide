@@ -193,7 +193,7 @@
                 dir = file ? file.dir : that.active.dir,
                 dom_id = this.dom.editor + id,
                 tab_title,
-                is_modified = file ? "" : "*",
+                is_modified = "", //file ? "" : "*",
                 project,
                 ed;
 
@@ -222,7 +222,7 @@
                 folder: that.active.folder,
                 // ace editor object
                 editor: ace.edit(dom_id),
-                modified: file ? false : true
+                modified: false // file ? false : true
             };
             this.editors[id] = ed;
 
@@ -535,7 +535,7 @@
             this.init_handlers();
             this.load_projects();
             this.load_files();
-            this.add_editor(null, 'Untitled', 'print "Hello World!"');            
+            this.add_editor(null, 'Untitled') //, 'print "Hello World!"');            
 
             return true;
     	}

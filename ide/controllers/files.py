@@ -3,6 +3,8 @@ import shutil
 import json
 import uuid
 import subprocess
+import fnmatch
+import re
 
 from ide.bottle import *
 from ide.bottleauth import User
@@ -22,6 +24,9 @@ def files_list():
 	user_id = User().id
 	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
 
+	IGNORE_FILES = r'|'.join([fnmatch.translate(x) \
+		for x in settings.IGNORE_FILES]) or r'$.'
+
 	f = {}
 	for (dirpath, dirname, filenames) in os.walk(path):
 		# TODO: consider to read content of file
@@ -32,7 +37,7 @@ def files_list():
 			"title": x,
 			"path": x, # this is files in user's ROOT so path is filename
 			"dir": ""
-		} for x in filenames]
+		} for x in filenames if not re.match(IGNORE_FILES, x)]
 
 		break
 	
@@ -198,6 +203,15 @@ def file_run():
 		stdout=subprocess.PIPE,
 		stderr=subprocess.PIPE
 	)
+
+	while True:
+        nextline = p.stdout.readline()
+        if nextline == '' and p.poll() != None:
+            break
+        yield nextline
+
+    # output = process.communicate()[0]
+    # exitCode = process.returncode
 
 	output, errors = p.communicate()
 

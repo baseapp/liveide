@@ -27,6 +27,9 @@ PROJECTS_ROOT = os.path.dirname(os.path.abspath(__file__)) + "/userdata/"
 # Disable sign up if you created users and don't want 3rd party to sign up.
 SIGNUP_ENABLED = True
 
+# Ignore files
+IGNORE_FILES = ["*.pyc", ".*"]
+
 # Override settings with local values if present
 try:
     from ide.local_settings import *
