@@ -78,15 +78,32 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Edit</a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Undo</a></li>
-                                <li><a href="#">Redo</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="undo">Undo</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="redo">Redo</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Cut</a></li>
-                                <li><a href="#">Copy</a></li>
-                                <li><a href="#">Paste</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="cut">Cut</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="copy">Copy</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="paste">Paste</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Find</a></li>
-                                <li><a href="#">Replace</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="find">Find</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="findnext">Find Next</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="findprevious">Find Previous</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="replace">Replace</a></li>
+                                <li><a href="#" class="liveide-edit-command" data-id="replaceall">Replace all</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-submenu">
+                                    <a href="#">Syntax</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="python">Python</a></li>
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="c_cpp">C</a></li>
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="css">CSS</a></li>
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="html">HTML</a></li>
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="xml">XML</a></li>
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="javascript">JavaScript</a></li>
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="text">Text</a></li>
+                                        <li><a href="#" class="liveide-edit-syntax" data-id="markdown">Markdown</a></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                         
@@ -114,18 +131,18 @@
                             </ul>
                         </li>
                         
-                        <!-- <li>
-                            <button type="submit" class="btn btn-inverse">
+                        <li>
+                            <button class="btn btn-inverse liveide-file-new">
                                 <i class="icon-file icon-white"></i>
                                 New</button>                        
                         </li>
                         
                         <li>
-                            <button type="submit" class="btn btn-inverse">
+                            <button class="btn btn-inverse liveide-file-save">
                                 <i class="icon-hdd icon-white"></i>
                                 Save
                             </button>                        
-                        </li> -->
+                        </li>
                         
                         <li>
                             <button class="btn btn-inverse liveide-file-run">

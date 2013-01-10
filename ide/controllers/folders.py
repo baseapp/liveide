@@ -51,3 +51,53 @@ def folder_create():
     }
 
     return json.dumps(c)
+
+
+@login_required
+@post("/folder_rename/")
+def folder_rename():
+    '''
+    Rename folder
+    '''
+
+    user_id = User().id
+    path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+    file_path = request.POST.get("path")
+    new_title = request.POST.get("new_title")
+    rel_dir = request.POST.get("dir", "")
+
+    if not file_path:
+        return json.dumps({"msg": "Specify folder name!"})
+
+    if new_title:
+        try:
+            os.rename(path + file_path, path + rel_dir + "/" + new_title)
+        except:
+            return json.dumps({"msg": "Error renaming folder!"})
+
+    return "{}"
+
+
+@login_required
+@post('/folder_remove/')
+def folder_remove():
+    '''
+    Removes folder from FS.
+    NOT REVERTABLE.
+    '''
+
+    user_id = User().id
+    path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+    file_path = request.POST.get("path")
+
+    if not file_path:
+        return json.dumps({"msg": "Specify folder name!"})
+
+    # Remove on FS
+    if os.path.exists(path + file_path):
+        try:
+            shutil.rmtree(path + file_path)
+        except:
+            return json.dumps({"msg": "Removing on FS failed!"})
+
+    return "{}"

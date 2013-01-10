@@ -9,6 +9,8 @@
 
 (function(){
     var LiveIDE = {
+        about_text: "BaseApp LiveIDE v.0.02",
+
         /* Constants for DOM selectors */
         init_dom: function () {
             this.dom = {
@@ -27,6 +29,11 @@
                     run: $(".liveide-file-run")
                 },
 
+                edit: {
+                    command: $(".liveide-edit-command"),
+                    syntax: $(".liveide-edit-syntax")
+                },
+
                 project: {
                     active: $(".liveide-active-project"),
                     create: $(".liveide-project-new"),
@@ -38,6 +45,8 @@
 
                 folder: {
                     create: $(".liveide-folder-new"),
+                    rename: $(".liveide-folder-rename"),
+                    remove: $(".liveide-folder-remove"),
                     tree_item: ".liveide-folder"
                 },
 
@@ -117,6 +126,11 @@
                     else
                         LiveIDE.helpers.render_file(f, v);
                 });
+            },
+
+            /* Removes folder */
+            remove_folder: function (id) {
+                $(".folder-click[data-id='" + id + "']").parent().remove();
             }
         },
 
@@ -215,9 +229,18 @@
             ed.editor.setValue(content || "");
 
             ed.editor.getSession().on('change', function(e) {
+                // // Cut event
+                // if (e.data.action == "removeText")
+                //    that.clipboardData = e.data.text; 
+
                 ed.modified = true;
                 that.dom.tabs.find("li[data-id='" + id + "']").find("sup").html("*");
             });
+
+            // ed.editor.getSession().on('cut', function(text) {
+            //     console.log(text)
+            //     that.clipboardData = text;
+            // });
 
 			ed.editor.setTheme("ace/theme/twilight");
 			ed.editor.getSession().setMode("ace/mode/python");
@@ -314,6 +337,56 @@
                 that.file.run(that.active.editor);
             });            
 
+            /* -- MENU EDIT ------------------------------------------------ */
+
+            this.dom.edit.command.on("click", function (e) {
+                e.preventDefault();
+                var id = $(this).data("id"),
+                    ed = that.active.editor ? that.active.editor.editor : null;
+
+                if (!ed) return;
+
+                switch (id) {
+                    case "undo":
+                        ed.undo();
+                        break;
+                    case "redo":
+                        ed.redo();
+                        break;
+                    case "cut":
+                        that.clipboardData = ed.getCopyText();
+                        ed.commands.commands.cut.exec(ed);
+                        break;
+                    case "copy":
+                        that.clipboardData = ed.getCopyText();
+                        break;
+                    case "paste":
+                        ed.insert(that.clipboardData, true);
+                        break;
+                    case "find":
+                        ed.commands.commands.find.exec(ed);
+                        break;
+                    case "findnext":
+                        ed.commands.commands.findnext.exec(ed);
+                        break;
+                    case "findprevious":
+                        ed.commands.commands.findprevious.exec(ed);
+                        break;
+                    case "replace":
+                        ed.commands.commands.replace.exec(ed);
+                        break;
+                    case "replaceall":
+                        ed.commands.commands.replaceall.exec(ed);
+                        break;
+                }
+            });
+
+            this.dom.edit.syntax.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.editor)
+                    that.active.editor.editor.getSession().setMode("ace/mode/" + $(this).data("id"));
+            });
+
             /* -- MENU PROJECT --------------------------------------------- */
 
     		/* Project -> Create Project */
@@ -336,11 +409,25 @@
                     that.project.remove(that.active.project);
             });
 
-            /* New Folder */
+            /* Folder -> New */
             this.dom.folder.create.on("click", function (e) {
                 e.preventDefault();
                 if (that.active.project)
                     that.project.create_folder(that.active.project, that.active.folder);
+            });
+
+            /* Folder -> Rename */
+            this.dom.folder.rename.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.folder)
+                    that.project.rename_folder(that.active.folder);
+            });
+
+            /* Folder -> Remove */
+            this.dom.folder.remove.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.folder)
+                    that.project.remove_folder(that.active.folder);
             });
 
             /* -- MENU HELP ------------------------------------------------ */
@@ -349,7 +436,7 @@
             this.dom.help.about.on("click", function (e) {
                 e.preventDefault();
 
-                bootbox.alert("BaseApp LiveIDE v.0.01");
+                bootbox.alert(that.about_text);
             });
 
             /* -- DOM ------------------------------------------------------ */
@@ -371,6 +458,18 @@
 
             /* Click on Close tab - close editor */
             this.dom.tabs.on("click", ".close", that.handle.close_editor);
+
+            // TODO: find a better way to track Cut event in editor
+            $(document).on("cut", ".liveide-editors", function (e) {
+                var t = that.active.editor.editor.getSession().$undoManager.$undoStack;
+                that.clipboardData = t[t.length-1][0].deltas[0].text;
+                //console.log(that.clipboardData);
+            });
+
+            $(document).on("copy", ".liveide-editors", function (e) {
+                that.clipboardData = that.active.editor.editor.getCopyText();
+                //console.log(that.clipboardData);
+            });
     	},
 
         load_projects: function () {
@@ -426,6 +525,8 @@
             this.projects = {};
             // Files without project
             this.files = {};
+
+            this.clipboardData = "";
 
             if (this.params.is_test) return true;
 

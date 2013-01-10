@@ -83,6 +83,7 @@
             });
         },
 
+        /* Create folder */
         create_folder: function (project, folder) {
             bootbox.prompt("New folder name", function(title) {
                 if (!title) return;
@@ -96,6 +97,56 @@
                 });
             });
         },
+
+        /* Rename folder */
+        rename_folder: function (folder) {
+            bootbox.prompt("Rename " + folder.title + " as", function(title) {
+                if (!title) return;
+
+                $.post("/folder_rename/", {"path": folder.path, "dir": folder.dir, "new_title": title}, function (data) {
+                    var v = $.parseJSON(data);
+
+                    if (v.msg) {
+                        that.flash(v.msg, true);
+                        return;
+                    }
+
+                    folder.title = title;
+                    that.active.dir = folder.path;
+                    that.dom.project.active.html(folder.path);
+                    that.dom.project.tree.find(".folder-click[data-id='" + folder.id + "']").html(title); 
+                    that.flash("Folder renamed");
+                });
+            });
+        },
+
+        /* Delete folder */
+        remove_folder: function (folder) {
+            if (!folder) return;
+
+            bootbox.confirm(folder.title + " and it's files will be vanished. Do you want to continue?", function(result) {
+                if (!result) return;
+
+                $.post("/folder_remove/", {"path": folder.path}, function (data) {
+                    var v = $.parseJSON(data);
+
+                    if (v.msg) {
+                        that.flash(v.msg, true);
+                        return;
+                    }
+                    
+                    that.helpers.remove_folder(folder.id);
+                    that.projects[folder.project].folders[folder.id] = null;
+
+                    that.flash("Folder removed");
+                });
+
+                that.active.project = null;
+                that.active.dir = "";
+                that.active.folder = null;
+                that.dom.project.active.html("");
+            });
+        }
     }
     
     this.LiveIDE = LiveIDE;
