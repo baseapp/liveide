@@ -26,7 +26,9 @@
         save_new: function (ed, close_on_success, run_on_success) {
             var content = ed.editor.getSession().getValue();
 
-            $.post("/file_create/", {title: ed.title, project: ed.project ? ed.project.id : "", dir: ed.dir, content: content}, function (data) {
+            $.post("/file_create/", {title: ed.title, project: ed.project ? ed.project.id : "", 
+                    dir: ed.dir, content: content}, function (data) {
+
                 var v = $.parseJSON(data);
 
                 if (v.msg) {
@@ -35,12 +37,13 @@
                 }
                 
                 v.id = ed.id; // this is one time ID, so no matter
+                that.files[v.id] = v;
                 ed.file = v;
                 ed.project = v.project ? that.projects[v.project] : null;
                 that.dom.tabs.find("li[data-id='" + ed.id + "']").find("sup").html("");
                 ed.modified = false;
 
-                that.helpers.render_file(v);
+                that.helpers.render_file(v, ed.folder);
 
                 that.flash("File saved");
 

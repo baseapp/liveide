@@ -100,7 +100,7 @@ def project_rename():
 
 	try:
 		path = "%s%i/" % (settings.PROJECTS_ROOT, item.user_id)
-		shutil.move(item.abs_path(), path + new_title)
+		os.rename(item.abs_path(), path + new_title)
 	except:
 		return json.dumps({"msg": "Error renaming project!"})
 

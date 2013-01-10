@@ -51,7 +51,9 @@ def file_create():
 	title = request.POST.get("title")
 	content = request.POST.get("content", "")
 	rel_dir = request.POST.get("dir", "")
-	file_path = rel_dir + "/" + title
+	file_path = title
+	if rel_dir:
+		file_path = rel_dir + "/" + file_path
 
 	user_id = User().id
 	project_id = request.POST.get("project")
@@ -60,6 +62,9 @@ def file_create():
 	
 	if project_id:
 		project = models.Project.find_one({"id": project_id})
+
+	if not os.path.exists(path):
+		os.makedirs(path)
 
 	if not os.path.exists(path + file_path):
 		try:
@@ -166,7 +171,7 @@ def file_save():
 	# Save as...
 	if new_title:
 		try:
-			shutil.move(path + file_path, path + rel_dir + "/" + new_title)
+			os.rename(path + file_path, path + rel_dir + "/" + new_title)
 		except:
 			return json.dumps({"msg": "Error renaming file!"})
 

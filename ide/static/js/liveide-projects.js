@@ -48,7 +48,7 @@
                     }
 
                     project.title = title;
-                    that.dom.project.tree.find("li[data-id='" + project.id + "']").find("label").html(title); 
+                    that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").html(title); 
                     that.dom.project.active.html(project.title);
                     that.flash("Project renamed");
                 });
@@ -78,16 +78,20 @@
 
                 that.active.project = null;
                 that.active.dir = "";
+                that.active.folder = null;
                 that.dom.project.active.html("");
             });
         },
 
-        create_folder: function (project, dir) {
+        create_folder: function (project, folder) {
             bootbox.prompt("New folder name", function(title) {
                 if (!title) return;
                 
-                that.post("/folder_create/", {"id": project.id, "title": title, "dir": dir}, function (v) {
-                    that.helpers.render_folder(v);
+                that.post("/folder_create/", {"id": project.id, "title": title, "dir": folder ? folder.path : project.title}, function (v) {
+                    project.folders[v.id] = v;
+                    that.helpers.render_folder(v, folder);
+                    that.active.folder = v;
+                    that.active.dir = v.path;
                     that.flash("Folder created");
                 });
             });

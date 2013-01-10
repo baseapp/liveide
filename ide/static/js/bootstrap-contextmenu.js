@@ -39,9 +39,9 @@
 
       if ($this.is('.disabled, :disabled')) return
       
-      if ($this.attr("class") == "project_click")
+      if ($this.attr("class") == "project-click")
         LiveIDE.handle.project_click(e, $this)
-      else if ($this.attr("class") == "folder_click")
+      else if ($this.attr("class") == "folder-click")
         LiveIDE.handle.folder_click(e, $this)
       else if ($this.attr("class") == "liveide-file")
         LiveIDE.handle.file_click(e, $this);

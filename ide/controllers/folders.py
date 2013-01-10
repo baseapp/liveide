@@ -42,9 +42,12 @@ def folder_create():
 
     c = {
         "id": uuid.uuid4().hex,
+        "is_folder": True,
         "title": title,
         "project": project_id,
+        "path": models.join(rel_dir, title),
         "dir": rel_dir,
+        "files": {}
     }
 
     return json.dumps(c)

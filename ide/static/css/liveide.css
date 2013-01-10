@@ -93,9 +93,10 @@
 }
 
 .liveide-active-project {
-	font-size: 1.2em;
+	/*font-size: 1em;*/
 	color: #fff;
-	padding-top: 8px;
+	padding-top: 10px;
+	padding-left: 2px;
 }
 
 /* Projects tree */

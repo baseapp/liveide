@@ -39,9 +39,9 @@
             that.active.project = that.projects[$this.data("project")];
             that.active.dir = $this.data("path");
             that.active.folder = that.active.project.folders[$this.data("id")];
-            that.dom.project.active.html(that.active.project.title);
+            that.dom.project.active.html(that.active.dir);
 
-            return false;
+            //return false;
         },
 
         file_click: function (e, $th) {
@@ -56,17 +56,16 @@
 
             if ($this.data("project")) {
                 that.active.project = that.projects[$this.data("project")];
-                that.dom.project.active.html(that.active.project.title);
                 file = that.active.project.files[id];
             } else {
                 that.active.project = null;
-                that.dom.project.active.html("");
                 file = that.files[id];
             }
 
             that.active.dir = file.dir;
-            that.active.folder = file.parent;
+            that.active.folder = file.folder;
             that.active.file = file;
+            that.dom.project.active.html(that.active.dir);
 
             if (!that.editors[id]) {
                 if (file.content)

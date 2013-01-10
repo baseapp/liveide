@@ -53,7 +53,7 @@
             
             /* Appends project */
             render_project: function (v) {
-                LiveIDE.dom.project.tree.append('<li class="liveide-project"><input type="checkbox" checked id="project-' + v.id + '" />'
+                LiveIDE.dom.project.tree.append('<li class="liveide-project"><input type="checkbox" id="project-' + v.id + '" />'
                     + '<label data-context-menu="#liveide-project-menu" data-id="' + v.id + '" class="project-click" for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id
                     + '"></ul></li>');
 
@@ -71,7 +71,7 @@
 
             /* Removes project */
             remove_project: function (id) {
-                $(".liveide-project[data-id='" + id + "']").remove();
+                $(".project-click[data-id='" + id + "']").parent().remove();
             },
 
             /* Appends file */
@@ -105,7 +105,7 @@
 
                 LiveIDE.projects[v.project].folders[v.id] = v;
 
-                root.append('<li class="liveide-folder"><input type="checkbox" checked id="folder-' + v.id + '" />'
+                root.append('<li class="liveide-folder"><input type="checkbox" id="folder-' + v.id + '" />'
                         + '<label data-context-menu="#liveide-folder-menu" data-id="' + v.id + '" data-project="' + v.project + '" data-path="' + v.path + '" class="folder-click" for="folder-' + v.id + '">'
                         + v.title + '</label><ul class="folder-' + v.id + '"></ul></li>');
                 
@@ -205,6 +205,7 @@
                 // title and dir - counts for new file
                 title: title,
                 dir: dir,
+                folder: that.active.folder,
                 // ace editor object
                 editor: ace.edit(dom_id),
                 modified: file ? false : true
@@ -241,36 +242,15 @@
             
             //ed.editor.focus();
 
-            this.active.project = null;
-            this.active.dir = "";
-            this.active.folder = null;
-
-            if (ed.file) {
-                // File from FS
+            if (ed.file)
                 this.active.file = ed.file;
-
-                if (ed.file.project) {
-                    this.active.project = this.projects[ed.file.project];
-                    this.active.dir = ed.file.dir;
-                    this.active.folder = ed.file.parent;
-                }
-            } else {
-                // Not persistent on FS file
+            else
                 this.active.file = null;
 
-                if (ed.project) {
-                    this.active.project = this.projects[ed.project];
-                    if (this.active.project) {
-                        this.active.dir = this.active.project.title;
-                        this.active.folder = null;
-                    }
-                }
-            }
-
-            if (this.active.project)
-                this.dom.project.active.html(this.active.project.title)
-            else
-                this.dom.project.active.html("");
+            this.active.project = ed.project ? this.projects[ed.project] : null;
+            this.active.dir = ed.dir;
+            this.active.folder = ed.folder;
+            this.dom.project.active.html(this.active.dir);
         },
 
         /* Event handlers bindings */
@@ -360,7 +340,7 @@
             this.dom.folder.create.on("click", function (e) {
                 e.preventDefault();
                 if (that.active.project)
-                    that.project.create_folder(that.active.project, that.active.dir);
+                    that.project.create_folder(that.active.project, that.active.folder);
             });
 
             /* -- MENU HELP ------------------------------------------------ */
@@ -417,15 +397,13 @@
 
     	init: function (params) {
             //$.ajaxSetup({ cache:false });
+            this.params = params || {};
 
             this.init_dom();
 
             // Open ace editor instances
             // hash key is ID of open file
             this.editors = {};
-
-    		this.init_layout();
-    		this.init_handlers();
 
             // Currently active Project / Dir / File / Editor
             this.active = {
@@ -449,10 +427,16 @@
             // Files without project
             this.files = {};
 
+            if (this.params.is_test) return true;
+
+            // Load data
+            this.init_layout();
+            this.init_handlers();
             this.load_projects();
             this.load_files();
+            this.add_editor(null, 'Untitled', 'print "Hello World!"');            
 
-            this.add_editor(null, 'Untitled', 'print "Hello World!"');
+            return true;
     	}
     };
 	
