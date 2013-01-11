@@ -10,7 +10,7 @@ import os
 DEBUG = False
 
 HOST = "localhost"
-PORT = 8080
+PORT = 80
 
 DATABASE = "liveide.db"
 
