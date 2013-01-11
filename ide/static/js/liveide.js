@@ -305,6 +305,10 @@
                 $('#notification-box').fadeOut("slow");
             }, 10000);
 
+            // Fix menus for touch screen devices
+            $('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
+            $('body').on('touchstart.dropdown', '.dropdown-submenu', function (e) { e.stopPropagation(); });
+
             /* -- MENU FILE ------------------------------------------------ */
 
             /* File -> New File */
