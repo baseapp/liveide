@@ -9,7 +9,7 @@ import os
 
 DEBUG = False
 
-HOST = "localhost"
+HOST = "0.0.0.0"
 PORT = int(os.environ.get("PORT", 5000))
 
 DATABASE = "liveide.db"
