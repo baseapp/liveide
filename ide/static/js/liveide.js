@@ -38,6 +38,7 @@
                     active: $(".liveide-active-project"),
                     create: $(".liveide-project-new"),
                     rename: $(".liveide-project-rename"),
+                    close: $(".liveide-project-close"),
                     remove: $(".liveide-project-remove"),
                     tree: $(".liveide-projects-tree"),
                     tree_item: ".liveide-project"
@@ -218,7 +219,7 @@
             if (file && file.project)
                 project = this.projects[file.project]
             else
-                project = that.active.project;
+                project = this.active.project;
 
             tab_title = title;
             if (file && file.dir)
@@ -287,7 +288,7 @@
             else
                 this.active.file = null;
 
-            this.active.project = ed.project ? this.projects[ed.project] : null;
+            this.active.project = ed.project;
             this.active.dir = ed.dir;
             this.active.folder = ed.folder;
             this.dom.project.active.html(this.active.dir);
@@ -417,6 +418,22 @@
                 e.preventDefault();
                 if (that.active.project)
                     that.project.rename(that.active.project);
+            });
+
+            /* Project -> Close */
+            this.dom.project.close.on("click", function (e) {
+                var project = that.active.project;
+                e.preventDefault();
+                
+                if (project) {
+                    // collapse project in tree
+                    that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").parent().find("input[type='checkbox']").attr("checked", false);
+                    // close all open project files
+                    $.each(that.editors, function (k, ed) {
+                        if (ed.file && ed.file.project && ed.file.project == project.id)
+                            that.file.close(ed);
+                    })
+                }
             });
 
             /* Project -> Delete Project */

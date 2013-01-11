@@ -115,7 +115,7 @@
                                 <li><a href="#">Open...</a></li>
                                 <li><a href="#" class="liveide-project-rename">Rename...</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Close Project</a></li>
+                                <li><a href="#" class="liveide-project-close">Close Project</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-remove">Delete Project</a></li>
                                 <li class="divider"></li>

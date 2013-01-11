@@ -48,7 +48,7 @@
                     }
 
                     project.title = title;
-                    that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").html(title); 
+                    that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").html(title);
                     that.dom.project.active.html(project.title);
                     that.flash("Project renamed");
                 });
