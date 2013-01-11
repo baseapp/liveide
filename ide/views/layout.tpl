@@ -35,6 +35,8 @@
         <li><a tabindex="-1" href="#" class="liveide-file-save-as">Rename...</a></li>
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-file-remove">Delete</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-download">Download</a></li>
     </ul>
 
     <ul id="liveide-project-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
@@ -69,6 +71,8 @@
                                 <li><a href="#" class="liveide-folder-new">New Folder</a></li>
                                 <li><a href="#" class="liveide-file-save">Save</a></li>
                                 <li><a href="#" class="liveide-file-save-as">Save as...</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#" class="liveide-file-download">Download</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-remove">Delete File</a></li>
                                 <li class="divider"></li>

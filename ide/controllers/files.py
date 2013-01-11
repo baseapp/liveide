@@ -226,3 +226,30 @@ def file_run():
 	res += 'process ended with return code %i' % p.returncode
 
 	return res
+
+
+@login_required
+@get("/file_downoad/")
+def file_downoad():
+	'''
+	Download file
+	'''
+
+	user_id = User().id
+	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+	file_path = request.GET.get("path")
+	filename = request.GET.get("filename")
+
+	if not file_path:
+		return "Specify file name!"
+
+	try:
+		fo = open(path + file_path, "rb")
+		content = fo.read()
+	except:
+		content = "Error reading file!"
+	finally:
+		fo.close()
+	response.content_type = 'text/text'
+	response.headers['Content-Disposition'] = 'attachment; filename="%s"' % filename
+	return content

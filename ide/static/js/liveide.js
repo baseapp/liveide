@@ -26,7 +26,8 @@
                     close: $(".liveide-file-close"),
                     remove: $(".liveide-file-remove"),
                     tree_item: ".liveide-file",
-                    run: $(".liveide-file-run")
+                    run: $(".liveide-file-run"),
+                    download: $(".liveide-file-download")
                 },
 
                 edit: {
@@ -353,7 +354,15 @@
             this.dom.file.run.on("click", function (e) {
                 e.preventDefault();
                 that.file.run(that.active.editor);
-            });            
+            });
+
+            /* File -> Download */
+            this.dom.file.download.on("click", function (e) {
+                var file = that.active.file;
+                e.preventDefault();
+                if(file)
+                    window.open("/file_downoad/?filename=" + file.title + "&path=" + file.path);
+            });
 
             /* -- MENU EDIT ------------------------------------------------ */
 
