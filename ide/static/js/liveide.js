@@ -27,7 +27,8 @@
                     remove: $(".liveide-file-remove"),
                     tree_item: ".liveide-file",
                     run: $(".liveide-file-run"),
-                    download: $(".liveide-file-download")
+                    download: $(".liveide-file-download"),
+                    upload: $(".liveide-file-upload")
                 },
 
                 edit: {
@@ -362,6 +363,11 @@
                 e.preventDefault();
                 if(file)
                     window.open("/file_downoad/?filename=" + file.title + "&path=" + file.path);
+            });
+
+            this.dom.file.upload.on("click", function (e) {
+                e.preventDefault();
+                that.file.upload();
             });
 
             /* -- MENU EDIT ------------------------------------------------ */

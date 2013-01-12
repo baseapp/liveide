@@ -41,6 +41,7 @@
 
     <ul id="liveide-project-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
         <li><a tabindex="-1" href="#" class="liveide-file-new">New File</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-upload">Upload File</a></li>
         <li><a tabindex="-1" href="#" class="liveide-project-rename">Rename...</a></li>
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
@@ -50,6 +51,7 @@
 
     <ul id="liveide-folder-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
         <li><a tabindex="-1" href="#" class="liveide-file-new">New File</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-upload">Upload File</a></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-rename">Rename...</a></li>
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
