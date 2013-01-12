@@ -40,7 +40,8 @@
                 if (!title) return;
 
                 $.post("/project_rename/", {"id": project.id, "new_title": title}, function (data) {
-                    var v = $.parseJSON(data);
+                    var v = $.parseJSON(data),
+                        old_title = project.title;
 
                     if (v.msg) {
                         that.flash(v.msg, true);
@@ -48,6 +49,16 @@
                     }
 
                     project.title = title;
+
+                    // Change attrs for files and folders in this project
+                    $.each(project.files, function (k, v) {
+                        v.dir = v.dir.replace(old_title, title);
+                        v.path = v.path.replace(old_title, title);
+                    });
+                    $.each(project.folders, function (k, v) {
+                        v.dir = v.dir.replace(old_title, title);
+                        v.path = v.path.replace(old_title, title);
+                    });
                     that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").html(title);
                     that.dom.project.active.html(project.title);
                     that.flash("Project renamed");
@@ -104,7 +115,8 @@
                 if (!title) return;
 
                 $.post("/folder_rename/", {"path": folder.path, "dir": folder.dir, "new_title": title}, function (data) {
-                    var v = $.parseJSON(data);
+                    var v = $.parseJSON(data),
+                    old_title = folder.title;
 
                     if (v.msg) {
                         that.flash(v.msg, true);
@@ -112,6 +124,13 @@
                     }
 
                     folder.title = title;
+
+                    // Change attrs for files in this folder
+                    $.each(folder.files, function (k, v) {
+                        v.dir = v.dir.replace(old_title, title);
+                        v.path = v.path.replace(old_title, title);
+                    });
+
                     that.active.dir = folder.path;
                     that.dom.project.active.html(folder.path);
                     that.dom.project.tree.find(".folder-click[data-id='" + folder.id + "']").html(title); 

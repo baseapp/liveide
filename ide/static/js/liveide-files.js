@@ -16,10 +16,11 @@
     LiveIDE.file = {
         /* Create */
         create: function () {
-            bootbox.prompt("New file name", function(title) {
-                if (!title) return;
-                that.add_editor(null, title);
-            });
+            // bootbox.prompt("New file name", function(title) {
+            //     if (!title) return;
+            //     that.add_editor(null, title);
+            // });
+            that.add_editor(null, "Untitled");
         },
 
         /* Save new file */

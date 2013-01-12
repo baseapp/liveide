@@ -596,6 +596,8 @@
             this.load_files();
             this.add_editor(null, 'Untitled') //, 'print "Hello World!"');            
 
+            bootbox.animate(false);
+
             return true;
     	}
     };
