@@ -264,7 +264,7 @@ def file_upload():
 
 	user_id = User().id
 	f = request.POST.get("file")
-	content = f.file.getvalue()
+	content = f.file.read()
 
 	rel_dir = request.GET.get("dir")
 	project_id = request.GET.get("project")

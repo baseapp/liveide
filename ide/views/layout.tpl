@@ -75,6 +75,7 @@
                                 <li><a href="#" class="liveide-file-save-as">Save as...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-download">Download</a></li>
+                                <li><a href="#" class="liveide-file-upload">Upload</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-remove">Delete File</a></li>
                                 <li class="divider"></li>

@@ -46,7 +46,7 @@ def project_create():
 
 	try:
 		fo = open(item.abs_path() + "/.liveideproject", "wb")
-		fo.write(item.title)
+		fo.write(json.dumps({"title": item.title}))
 	finally:
 		fo.close()
 

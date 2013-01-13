@@ -224,7 +224,7 @@
             var project = that.active.project,
                 folder = that.active.folder;
             
-            if (!(project || folder)) return;
+            //if (!(project || folder)) return;
 
             bootbox.upload("Choose file", "/file_upload/", function($form) {
                 if (!$form) return;
@@ -233,7 +233,7 @@
                 form_data.append("file", $form.find("input[type='file']")[0].files[0]);
 
                 $.ajax({
-                    url: $form.attr("action") + "?project=" + project.id + "&dir=" + that.active.dir,
+                    url: $form.attr("action") + "?project=" + (project ? project.id : "") + "&dir=" + that.active.dir,
                     processData: false,
                     contentType: false,
                     data: form_data, // $form.serialize(),
@@ -255,7 +255,11 @@
                             return;
                         }
 
-                        project.files[data.id] = data;
+                        if (project)
+                            project.files[data.id] = data
+                        else
+                            that.files[data.id] = data;
+
                         if (folder)
                             folder.files[data.id] = data;
 
