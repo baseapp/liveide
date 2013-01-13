@@ -94,6 +94,41 @@
             });
         },
 
+        /* Settings of project */
+        settings: function (project) {
+            var s = $.extend({
+                    build: "python",
+                    description: ""
+                }, project.settings),
+                form = $("<form></form>");
+            form.append("<label>Build system:</label> <input type=text name='build' value='" + s.build + "' />");
+            form.append("<label>Description:</label> <textarea name='description'>" + s.description + "</textarea>");
+
+            bootbox.form("Project settings", form, function($form) {
+                if (!$form) return;
+
+                var settings = {};
+
+                $form.find(':input[name]:enabled').each( function() {
+                    var self = $(this);
+                    var name = self.attr('name');
+                    if (settings[name]) {
+                        settings[name] = settings[name] + ',' + self.val();
+                    } else {
+                        settings[name] = self.val();
+                    }
+                });
+
+                settings["id"] = project.id;
+                settings["title"] = project.title;
+                
+                that.post("/project_settings/", settings, function (v) {
+                    project.settings = v;
+                    that.flash("Settings saved");
+                });
+            });
+        },
+
         /* Create folder */
         create_folder: function (project, folder) {
             bootbox.prompt("New folder name", function(title) {

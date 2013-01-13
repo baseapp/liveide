@@ -126,7 +126,7 @@
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-remove">Delete Project</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Settings</a></li>
+                                <li><a href="#" class="liveide-project-settings">Settings</a></li>
                             </ul>
                         </li>
                         

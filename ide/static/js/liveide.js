@@ -42,6 +42,7 @@
                     rename: $(".liveide-project-rename"),
                     close: $(".liveide-project-close"),
                     remove: $(".liveide-project-remove"),
+                    settings: $(".liveide-project-settings"),
                     tree: $(".liveide-projects-tree"),
                     tree_item: ".liveide-project"
                 },
@@ -456,6 +457,13 @@
                 e.preventDefault();
                 if (that.active.project)
                     that.project.remove(that.active.project);
+            });
+
+            /* Project -> Settings */
+            this.dom.project.settings.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.project)
+                    that.project.settings(that.active.project);
             });
 
             /* Folder -> New */
