@@ -216,6 +216,7 @@
 
             $.get("/file_run/", {path: editor.file.path}, function (data) {
                     that.dom.console.append("<pre>" + data + "</pre>");
+                    that.dom.console.find("pre:last")[0].scrollIntoView(true);
                     that.flash("Run complete");
                 });
         },
