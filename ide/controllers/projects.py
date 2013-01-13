@@ -107,4 +107,16 @@ def project_rename():
 	item.title = new_title
 	item.save()
 
+	#try:
+	fo = open(item.abs_path() + "/.liveideproject", "r+")
+	try:
+		project_settings = json.loads(fo.read() or "{}")
+	except:
+		project_settings = {}
+	project_settings["title"] = item.title
+	fo.truncate(0)
+	fo.write(json.dumps(project_settings))
+	#finally:
+	fo.close()
+
 	return "{}"
