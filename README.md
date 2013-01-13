@@ -1,7 +1,10 @@
 Live IDE
 ========
 
-Online / Offline browser based IDE for Python.
+Online / Offline browser based IDE for Python (and not only).
+
+Try LiveIDE on heroku: http://liveide.herokuapp.com
+
 
 Requirements
 ============

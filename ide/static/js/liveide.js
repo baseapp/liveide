@@ -9,7 +9,7 @@
 
 (function(){
     var LiveIDE = {
-        about_text: "BaseApp LiveIDE v.0.02",
+        about_text: "BaseApp LiveIDE v.0.05",
 
         /* Constants for DOM selectors */
         init_dom: function () {
@@ -19,6 +19,7 @@
                 editors: $(".liveide-editors"), // Wrapper for all editors
                 tabs: $(".liveide-tabs"), // Wrapper for tabs
                 console: $(".liveide-console"),
+                line_number: ".liveide-line-number",
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
@@ -109,10 +110,10 @@
 
                     LiveIDE.projects[v.project].files[v.id] = v;
 
-                    root.append('<li class="liveide-file" data-id="' + v.id 
+                    root.append('<li class="liveide-file" data-id="' + v.id
                         + '" data-project="' + v.project + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
                 } else {
-                    LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id 
+                    LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id
                         + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
                 }
 
@@ -284,7 +285,7 @@
             this.dom.editors.find("pre").css("z-index", "0");
             $("#" + this.dom.editor + id).css("z-index", "1");
             
-            //ed.editor.focus();
+            ed.editor.focus();
 
             if (ed.file)
                 this.active.file = ed.file;
@@ -529,6 +530,7 @@
                 //console.log(that.clipboardData);
             });
 
+            // Ctrl + S
             $(document).on("keypress", ".liveide-editors", function (e) {
                 if (!(e.which == 115 && e.ctrlKey) && !(e.which == 19)) return true;
                 
@@ -542,6 +544,18 @@
 
                 e.preventDefault();
                 return false;
+            });
+
+            // Click in console on error line number
+            $(document).on("click", this.dom.line_number, function (e) {
+                e.preventDefault();
+                var line = $(this).text().replace("line ", ""),
+                    ed = that.active.editor;
+
+                if (ed) {
+                    ed.editor.gotoLine(parseInt(line));
+                    ed.editor.focus();
+                }
             });
     	},
 

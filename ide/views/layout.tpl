@@ -135,6 +135,8 @@
                             <ul class="dropdown-menu">
                                 <li><a href="http://python.org/doc/" target=_blank>Python documentation</a></li>
                                 <li class="divider"></li>
+                                <li><a href="https://github.com/baseapp/liveide/" target=_blsnk>LiveIDE on GitHub</a></li>
+                                <li class="divider"></li>
                                 <li><a href="#" class="liveide-about">About LiveIDE</a></li>
                             </ul>
                         </li>
