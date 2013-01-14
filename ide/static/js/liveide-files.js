@@ -215,7 +215,7 @@
             if (!editor) return;
 
             $.get("/file_run/", {path: editor.file.path}, function (data) {
-                    data = data.replace(/(line\s[0-9](?=,))/gi, "<a href='#' class='liveide-line-number'>$1</a>");
+                    data = data.replace(/(line\s[0-9](?=[,\s]))/gi, "<a href='#' class='liveide-line-number'>$1</a>");
                     that.dom.console.append("<pre>" + data + "</pre>");
                     that.dom.console.find("pre:last")[0].scrollIntoView(true);
                     that.flash("Run complete");
