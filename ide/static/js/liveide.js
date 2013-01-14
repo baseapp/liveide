@@ -418,8 +418,15 @@
 
             this.dom.edit.syntax.on("click", function (e) {
                 e.preventDefault();
-                if (that.active.editor)
-                    that.active.editor.editor.getSession().setMode("ace/mode/" + $(this).data("id"));
+
+                var id = $(this).data("id");
+
+                if (id && that.active.editor)
+                    that.active.editor.editor.getSession().setMode("ace/mode/" + id)
+                else
+                    // Fix for Edit -> Syntax submenu item on touch devices
+                    // So it can be clickable and not hide syntax options
+                    return false;
             });
 
             /* -- MENU PROJECT --------------------------------------------- */

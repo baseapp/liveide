@@ -100,7 +100,7 @@
                                 <li><a href="#" class="liveide-edit-command" data-id="replaceall">Replace all</a></li>
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu">
-                                    <a href="#">Syntax</a>
+                                    <a href="#" class="liveide-edit-syntax">Syntax</a>
                                     <ul class="dropdown-menu">
                                         <li><a href="#" class="liveide-edit-syntax" data-id="python">Python</a></li>
                                         <li><a href="#" class="liveide-edit-syntax" data-id="c_cpp">C</a></li>
