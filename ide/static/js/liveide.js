@@ -9,7 +9,7 @@
 
 (function(){
     var LiveIDE = {
-        about_text: "BaseApp LiveIDE v.0.02",
+        about_text: "BaseApp LiveIDE v.0.05",
 
         /* Constants for DOM selectors */
         init_dom: function () {
@@ -19,6 +19,7 @@
                 editors: $(".liveide-editors"), // Wrapper for all editors
                 tabs: $(".liveide-tabs"), // Wrapper for tabs
                 console: $(".liveide-console"),
+                line_number: ".liveide-line-number",
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
@@ -27,7 +28,8 @@
                     remove: $(".liveide-file-remove"),
                     tree_item: ".liveide-file",
                     run: $(".liveide-file-run"),
-                    download: $(".liveide-file-download")
+                    download: $(".liveide-file-download"),
+                    upload: $(".liveide-file-upload")
                 },
 
                 edit: {
@@ -41,6 +43,7 @@
                     rename: $(".liveide-project-rename"),
                     close: $(".liveide-project-close"),
                     remove: $(".liveide-project-remove"),
+                    settings: $(".liveide-project-settings"),
                     tree: $(".liveide-projects-tree"),
                     tree_item: ".liveide-project"
                 },
@@ -107,10 +110,10 @@
 
                     LiveIDE.projects[v.project].files[v.id] = v;
 
-                    root.append('<li class="liveide-file" data-id="' + v.id 
+                    root.append('<li class="liveide-file" data-id="' + v.id
                         + '" data-project="' + v.project + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
                 } else {
-                    LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id 
+                    LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id
                         + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
                 }
 
@@ -282,7 +285,7 @@
             this.dom.editors.find("pre").css("z-index", "0");
             $("#" + this.dom.editor + id).css("z-index", "1");
             
-            //ed.editor.focus();
+            ed.editor.focus();
 
             if (ed.file)
                 this.active.file = ed.file;
@@ -368,6 +371,11 @@
                     window.open("/file_downoad/?filename=" + file.title + "&path=" + file.path);
             });
 
+            this.dom.file.upload.on("click", function (e) {
+                e.preventDefault();
+                that.file.upload();
+            });
+
             /* -- MENU EDIT ------------------------------------------------ */
 
             this.dom.edit.command.on("click", function (e) {
@@ -414,8 +422,15 @@
 
             this.dom.edit.syntax.on("click", function (e) {
                 e.preventDefault();
-                if (that.active.editor)
-                    that.active.editor.editor.getSession().setMode("ace/mode/" + $(this).data("id"));
+
+                var id = $(this).data("id");
+
+                if (id && that.active.editor)
+                    that.active.editor.editor.getSession().setMode("ace/mode/" + id)
+                else
+                    // Fix for Edit -> Syntax submenu item on touch devices
+                    // So it can be clickable and not hide syntax options
+                    return false;
             });
 
             /* -- MENU PROJECT --------------------------------------------- */
@@ -454,6 +469,13 @@
                 e.preventDefault();
                 if (that.active.project)
                     that.project.remove(that.active.project);
+            });
+
+            /* Project -> Settings */
+            this.dom.project.settings.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.project)
+                    that.project.settings(that.active.project);
             });
 
             /* Folder -> New */
@@ -519,6 +541,7 @@
                 //console.log(that.clipboardData);
             });
 
+            // Ctrl + S
             $(document).on("keypress", ".liveide-editors", function (e) {
                 if (!(e.which == 115 && e.ctrlKey) && !(e.which == 19)) return true;
                 
@@ -532,6 +555,18 @@
 
                 e.preventDefault();
                 return false;
+            });
+
+            // Click in console on error line number
+            $(document).on("click", this.dom.line_number, function (e) {
+                e.preventDefault();
+                var line = $(this).text().replace("line ", ""),
+                    ed = that.active.editor;
+
+                if (ed) {
+                    ed.editor.gotoLine(parseInt(line));
+                    ed.editor.focus();
+                }
             });
     	},
 
@@ -599,6 +634,8 @@
             this.load_projects();
             this.load_files();
             this.add_editor(null, 'Untitled') //, 'print "Hello World!"');            
+
+            bootbox.animate(false);
 
             return true;
     	}

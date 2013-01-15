@@ -1,7 +1,10 @@
 Live IDE
 ========
 
-Online / Offline browser based IDE for Python.
+Online / Offline browser based IDE for Python (and not only).
+
+Try LiveIDE on heroku: http://liveide.herokuapp.com
+
 
 Requirements
 ============
@@ -23,7 +26,7 @@ Configure (settings.py / local_settings.py)
 ===========================================
 
 To make your own configuration use `ide/local_settings.def` as a template
-for `local_settings.py`.
+for `ide/local_settings.py`.
 
  * By default root dir to store projects is `liveide/ide/userdata`.
 

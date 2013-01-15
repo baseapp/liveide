@@ -43,7 +43,7 @@
         LiveIDE.handle.project_click(e, $this)
       else if ($this.attr("class") == "folder-click")
         LiveIDE.handle.folder_click(e, $this)
-      else if ($this.attr("class") == "liveide-file")
+      else if ($this.attr("class").search("liveide-file") > -1)
         LiveIDE.handle.file_click(e, $this);
 
       clearMenus()

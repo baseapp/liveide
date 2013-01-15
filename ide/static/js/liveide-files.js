@@ -16,10 +16,11 @@
     LiveIDE.file = {
         /* Create */
         create: function () {
-            bootbox.prompt("New file name", function(title) {
-                if (!title) return;
-                that.add_editor(null, title);
-            });
+            // bootbox.prompt("New file name", function(title) {
+            //     if (!title) return;
+            //     that.add_editor(null, title);
+            // });
+            that.add_editor(null, "Untitled");
         },
 
         /* Save new file */
@@ -214,9 +215,65 @@
             if (!editor) return;
 
             $.get("/file_run/", {path: editor.file.path}, function (data) {
+                    data = data.replace(/(line\s[0-9](?=[,\s]))/gi, "<a href='#' class='liveide-line-number'>$1</a>");
                     that.dom.console.append("<pre>" + data + "</pre>");
+                    that.dom.console.find("pre:last")[0].scrollIntoView(true);
                     that.flash("Run complete");
                 });
+        },
+
+        upload: function () {
+            var project = that.active.project,
+                folder = that.active.folder;
+            
+            //if (!(project || folder)) return;
+
+            bootbox.upload("Choose file", "/file_upload/", function($form) {
+                if (!$form) return;
+
+                var form_data = new FormData();
+                form_data.append("file", $form.find("input[type='file']")[0].files[0]);
+
+                $.ajax({
+                    url: $form.attr("action") + "?project=" + (project ? project.id : "") + "&dir=" + that.active.dir,
+                    processData: false,
+                    contentType: false,
+                    data: form_data, // $form.serialize(),
+                    type: $form.attr("method"),
+                    success: function(data, text) {
+                        // handle lack of response (error callback isn't called in this case)
+                        if (undefined === data) {
+                            if (!window.navigator.onLine)
+                                that.flash("No connection. Try again.", true)
+                            else
+                                that.flash("No response from server. Try again.", true);
+                            return;
+                        }
+
+                        data = JSON.parse(data);
+
+                        if (data.msg) {
+                            that.flash(data.msg, true);
+                            return;
+                        }
+
+                        if (project)
+                            project.files[data.id] = data
+                        else
+                            that.files[data.id] = data;
+
+                        if (folder)
+                            folder.files[data.id] = data;
+
+                        that.helpers.render_file(data, folder);
+                        that.flash("File uploaded");
+                    },
+                    error: function() {
+                        that.flash("Server error or no connection. Please try again.", true);
+                    } //,
+                    //dataType: "json"
+                });
+            });
         }
     };    
 

@@ -40,7 +40,8 @@
                 if (!title) return;
 
                 $.post("/project_rename/", {"id": project.id, "new_title": title}, function (data) {
-                    var v = $.parseJSON(data);
+                    var v = $.parseJSON(data),
+                        old_title = project.title;
 
                     if (v.msg) {
                         that.flash(v.msg, true);
@@ -48,6 +49,16 @@
                     }
 
                     project.title = title;
+
+                    // Change attrs for files and folders in this project
+                    $.each(project.files, function (k, v) {
+                        v.dir = v.dir.replace(old_title, title);
+                        v.path = v.path.replace(old_title, title);
+                    });
+                    $.each(project.folders, function (k, v) {
+                        v.dir = v.dir.replace(old_title, title);
+                        v.path = v.path.replace(old_title, title);
+                    });
                     that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").html(title);
                     that.dom.project.active.html(project.title);
                     that.flash("Project renamed");
@@ -83,6 +94,41 @@
             });
         },
 
+        /* Settings of project */
+        settings: function (project) {
+            var s = $.extend({
+                    build: "python",
+                    description: ""
+                }, project.settings),
+                form = $("<form></form>");
+            form.append("<label>Build system:</label> <input type=text name='build' value='" + s.build + "' />");
+            form.append("<label>Description:</label> <textarea name='description'>" + s.description + "</textarea>");
+
+            bootbox.form("Project settings", form, function($form) {
+                if (!$form) return;
+
+                var settings = {};
+
+                $form.find(':input[name]:enabled').each( function() {
+                    var self = $(this);
+                    var name = self.attr('name');
+                    if (settings[name]) {
+                        settings[name] = settings[name] + ',' + self.val();
+                    } else {
+                        settings[name] = self.val();
+                    }
+                });
+
+                settings["id"] = project.id;
+                settings["title"] = project.title;
+                
+                that.post("/project_settings/", settings, function (v) {
+                    project.settings = v;
+                    that.flash("Settings saved");
+                });
+            });
+        },
+
         /* Create folder */
         create_folder: function (project, folder) {
             bootbox.prompt("New folder name", function(title) {
@@ -104,7 +150,8 @@
                 if (!title) return;
 
                 $.post("/folder_rename/", {"path": folder.path, "dir": folder.dir, "new_title": title}, function (data) {
-                    var v = $.parseJSON(data);
+                    var v = $.parseJSON(data),
+                    old_title = folder.title;
 
                     if (v.msg) {
                         that.flash(v.msg, true);
@@ -112,6 +159,13 @@
                     }
 
                     folder.title = title;
+
+                    // Change attrs for files in this folder
+                    $.each(folder.files, function (k, v) {
+                        v.dir = v.dir.replace(old_title, title);
+                        v.path = v.path.replace(old_title, title);
+                    });
+
                     that.active.dir = folder.path;
                     that.dom.project.active.html(folder.path);
                     that.dom.project.tree.find(".folder-click[data-id='" + folder.id + "']").html(title); 

@@ -2,6 +2,7 @@ import os
 import uuid
 import fnmatch
 import re
+import json
 
 import goatfish
 import sqlite3
@@ -91,12 +92,27 @@ class Project(goatfish.Model):
 
         return res
 
+    def get_settings(self):
+        '''
+        Returns settings from `liveideproject` file (if present)
+        '''
+        try:
+            fo = open(self.abs_path() + "/.liveideproject", "rb")
+            try:
+                project_settings = json.loads(fo.read())
+            except:
+                project_settings = {}
+        finally:
+            fo.close()
+        return project_settings
+
     def json(self):
         return {
             "id": self.id,
             "title": self.title,
             "user_id": self.user_id,
-            "tree": self.get_files()
+            "tree": self.get_files(),
+            "settings": self.get_settings()
         }
 
     def projects_root(self):

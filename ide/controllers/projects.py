@@ -46,7 +46,7 @@ def project_create():
 
 	try:
 		fo = open(item.abs_path() + "/.liveideproject", "wb")
-		fo.write(item.title)
+		fo.write(json.dumps({"title": item.title}))
 	finally:
 		fo.close()
 
@@ -107,4 +107,41 @@ def project_rename():
 	item.title = new_title
 	item.save()
 
+	try:
+		fo = open(item.abs_path() + "/.liveideproject", "r+")
+		try:
+			project_settings = json.loads(fo.read() or "{}")
+		except:
+			project_settings = {}
+		project_settings["title"] = item.title
+		fo.truncate(0)
+		fo.write(json.dumps(project_settings))
+	finally:
+		fo.close()
+
 	return "{}"
+
+
+@login_required
+@post('/project_settings/')
+def project_settings():
+	'''
+	Saves project settings to `.liveideproject` file.
+	'''
+
+	user = User()
+	item = models.Project.find_one({"id": request.POST.get("id")})
+
+	if user.id != item.user_id:
+		return json.dumps({"msg": "User ID not match with project ID!"})
+
+	project_settings = dict(request.POST)
+
+	#try:
+	fo = open(item.abs_path() + "/.liveideproject", "r+")
+	fo.truncate(0)
+	fo.write(json.dumps(project_settings))
+	#finally:
+	fo.close()
+
+	return json.dumps(project_settings)

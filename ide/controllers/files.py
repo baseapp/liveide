@@ -253,3 +253,47 @@ def file_downoad():
 	response.content_type = 'text/text'
 	response.headers['Content-Disposition'] = 'attachment; filename="%s"' % filename
 	return content
+
+
+@login_required
+@post("/file_upload/")
+def file_upload():
+	'''
+	Upload file
+	'''
+
+	user_id = User().id
+	f = request.POST.get("file")
+	content = f.file.read()
+
+	rel_dir = request.GET.get("dir")
+	project_id = request.GET.get("project")
+
+	file_path = f.filename
+	if rel_dir:
+		file_path = rel_dir + "/" + file_path
+
+	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+
+	if not os.path.exists(path + file_path):
+		try:
+			fo = open(path + file_path, "wb")
+			fo.write(content)
+		except:
+			return json.dumps({"msg": "Error uploading file!"})
+		finally:
+			fo.close()
+
+		# uuid.uuid4().hex is just one time ID for file, for UI usage only
+		c = {
+			"id": uuid.uuid4().hex,
+			"title": f.filename,
+			"project": project_id,
+			"content": content,
+			"path": file_path,
+			"dir": rel_dir,
+		}
+
+		return json.dumps(c)
+
+	return json.dumps({"msg": "File exists!"})

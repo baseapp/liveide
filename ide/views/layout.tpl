@@ -41,6 +41,7 @@
 
     <ul id="liveide-project-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
         <li><a tabindex="-1" href="#" class="liveide-file-new">New File</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-upload">Upload File</a></li>
         <li><a tabindex="-1" href="#" class="liveide-project-rename">Rename...</a></li>
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
@@ -50,6 +51,7 @@
 
     <ul id="liveide-folder-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
         <li><a tabindex="-1" href="#" class="liveide-file-new">New File</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-file-upload">Upload File</a></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-rename">Rename...</a></li>
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
@@ -73,6 +75,7 @@
                                 <li><a href="#" class="liveide-file-save-as">Save as...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-download">Download</a></li>
+                                <li><a href="#" class="liveide-file-upload">Upload</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-file-remove">Delete File</a></li>
                                 <li class="divider"></li>
@@ -97,7 +100,7 @@
                                 <li><a href="#" class="liveide-edit-command" data-id="replaceall">Replace all</a></li>
                                 <li class="divider"></li>
                                 <li class="dropdown-submenu">
-                                    <a href="#">Syntax</a>
+                                    <a href="#" class="liveide-edit-syntax">Syntax</a>
                                     <ul class="dropdown-menu">
                                         <li><a href="#" class="liveide-edit-syntax" data-id="python">Python</a></li>
                                         <li><a href="#" class="liveide-edit-syntax" data-id="c_cpp">C</a></li>
@@ -123,7 +126,7 @@
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-remove">Delete Project</a></li>
                                 <li class="divider"></li>
-                                <li><a href="#">Settings</a></li>
+                                <li><a href="#" class="liveide-project-settings">Settings</a></li>
                             </ul>
                         </li>
                         
@@ -131,6 +134,8 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Help</a>
                             <ul class="dropdown-menu">
                                 <li><a href="http://python.org/doc/" target=_blank>Python documentation</a></li>
+                                <li class="divider"></li>
+                                <li><a href="https://github.com/baseapp/liveide/" target=_blsnk>LiveIDE on GitHub</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-about">About LiveIDE</a></li>
                             </ul>
