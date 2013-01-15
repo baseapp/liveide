@@ -76,7 +76,7 @@
                     sort_files = LiveIDE.helpers.sort_files;
 
                 LiveIDE.dom.project.tree.append('<li class="liveide-project"><input type="checkbox" id="project-' + v.id + '" />'
-                    + '<label data-context-menu="#liveide-project-menu" data-id="' + v.id + '" class="project-click" for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id
+                    + '<label data-context-menu="#liveide-project-menu" data-id="' + v.id + '" class="project-click accept-drop" for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id
                     + '"></ul></li>');
 
                 $(".project-click").contextmenu();
@@ -110,11 +110,11 @@
 
                     LiveIDE.projects[v.project].files[v.id] = v;
 
-                    root.append('<li class="liveide-file" data-id="' + v.id
-                        + '" data-project="' + v.project + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
+                    root.append('<li class="liveide-file draggable" data-id="' + v.id
+                        + '" data-project="' + v.project + '" data-context-menu="#liveide-file-menu" draggable="true">' + v.title + '</li>');
                 } else {
-                    LiveIDE.dom.project.tree.append('<li class="liveide-file" data-id="' + v.id
-                        + '" data-context-menu="#liveide-file-menu">' + v.title + '</li>');
+                    LiveIDE.dom.project.tree.append('<li class="liveide-file draggable" data-id="' + v.id
+                        + '" data-context-menu="#liveide-file-menu" draggable="true">' + v.title + '</li>');
                 }
 
                 $(".liveide-file").contextmenu();
@@ -134,8 +134,9 @@
 
                 LiveIDE.projects[v.project].folders[v.id] = v;
 
-                root.append('<li class="liveide-folder"><input type="checkbox" id="folder-' + v.id + '" />'
-                        + '<label data-context-menu="#liveide-folder-menu" data-id="' + v.id + '" data-project="' + v.project + '" data-path="' + v.path + '" class="folder-click" for="folder-' + v.id + '">'
+                root.append('<li class="liveide-folder draggable" draggable="true"><input type="checkbox" id="folder-' + v.id + '" />'
+                        + '<label data-context-menu="#liveide-folder-menu" data-id="' + v.id + '" data-project="' + v.project
+                        + '" data-path="' + v.path + '" class="folder-click accept-drop" for="folder-' + v.id + '">'
                         + v.title + '</label><ul class="folder-' + v.id + '"></ul></li>');
                 
                 $(".folder-click").contextmenu();
@@ -557,6 +558,7 @@
                 return false;
             });
 
+            /* -- CONSOLE -------------------------------------------------- */
             // Click in console on error line number
             $(document).on("click", this.dom.line_number, function (e) {
                 e.preventDefault();
@@ -567,6 +569,55 @@
                     ed.editor.gotoLine(parseInt(line));
                     ed.editor.focus();
                 }
+            });
+
+            /* -- DRAG AND DROP -------------------------------------------- */
+            $(document).on("dragstart", ".draggable", function (e) {
+                var $this = $(this);
+                
+                e.originalEvent.dataTransfer.effectAllowed = 'move';
+
+                // Drag & Drop inside browser
+                e.originalEvent.dataTransfer.setData('text/html', $this.html());
+
+                // Download file by drag & drop
+                if ($this.hasClass("liveide-file")) {
+                    // set current file as active
+                    that.handle.file_click(e, $this)
+
+                    var file = that.active.file,
+                        loc = window.location,
+                        url;
+
+                    if(file) {
+                        url = "application/octet-stream:" + file.title + ":"
+                            + loc.protocol + "//" + loc.host + "/file_downoad/?filename=" + file.title + "&path=" + file.path;
+
+                        e.originalEvent.dataTransfer.setData("DownloadURL", url);
+                    }
+                }
+            });
+
+            $(document).on("dragenter", "label.accept-drop", function (e) {
+                this.classList.add('over');
+            });
+
+            $(document).on("dragleave", "label.accept-drop", function (e) {
+                this.classList.remove('over');
+            });
+
+            $(document).on("dragover", "label.accept-drop", function (e) {
+                e.stopPropagation();
+                e.originalEvent.dataTransfer.dropEffect = 'move';
+                return false;
+            });
+
+            $(document).on("drop", "label.accept-drop", function (e) {
+                e.stopPropagation();
+                this.classList.remove('over');
+
+                console.log(e.originalEvent.dataTransfer);
+                return false;
             });
     	},
 

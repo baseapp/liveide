@@ -218,6 +218,10 @@
     margin: 0px !important;
 }
 
+.over {
+	border: 2px dashed #000;
+}
+
 .liveide-file {
 	cursor: pointer;
 }
