@@ -150,7 +150,7 @@ def file_content():
 @post("/file_save/")
 def file_save():
 	'''
-	Save / Save as... file on FS
+	Save / Save as... / Move file on FS
 	'''
 
 	user_id = User().id
@@ -161,22 +161,24 @@ def file_save():
 	# If specified `new_title` - Save as...
 	new_title = request.POST.get("new_title")
 	rel_dir = request.POST.get("dir", "")
+	new_dir = request.POST.get("new_dir") or rel_dir
 
 	if not file_path:
 		return json.dumps({"msg": "Specify file name!"})
 
-	try:
-		fo = open(path + file_path, "wb")
-		fo.write(content)
-	except:
-		return json.dumps({"msg": "Error writing file!"})
-	finally:
-		fo.close()
-
-	# Save as...
-	if new_title:
+	if content != None:
 		try:
-			os.rename(path + file_path, path + rel_dir + "/" + new_title)
+			fo = open(path + file_path, "wb")
+			fo.write(content)
+		except:
+			return json.dumps({"msg": "Error writing file!"})
+		finally:
+			fo.close()
+
+	# Save as... / Move
+	if (path+file_path != path+new_dir+"/"+new_title):
+		try:
+			os.rename(path + file_path, path + new_dir + "/" + new_title)
 		except:
 			return json.dumps({"msg": "Error renaming file!"})
 

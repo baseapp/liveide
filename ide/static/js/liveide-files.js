@@ -27,16 +27,9 @@
         save_new: function (ed, close_on_success, run_on_success) {
             var content = ed.editor.getSession().getValue();
 
-            $.post("/file_create/", {title: ed.title, project: ed.project ? ed.project.id : "", 
-                    dir: ed.dir, content: content}, function (data) {
+            that.post("/file_create/", {"title": ed.title, "project": ed.project ? ed.project.id : "", 
+                    "dir": ed.dir, "content": content}, function (v) {
 
-                var v = $.parseJSON(data);
-
-                if (v.msg) {
-                    that.flash(v.msg, true);
-                    return;
-                }
-                
                 v.id = ed.id; // this is one time ID, so no matter
                 that.files[v.id] = v;
                 ed.file = v;
@@ -76,33 +69,47 @@
         },
 
         /* Save existing file */
-        save_existing: function (ed, close_on_success, run_on_success, new_title) {
-            var content = ed.editor.getSession().getValue();
+        save_existing: function (ed, close_on_success, run_on_success, new_title, target) {
+            var content = ed.editor ? ed.editor.getSession().getValue() : "",
+                dir = target ? target.path : "",
+                el = $(that.dom.file.tree_item + "[data-id='" + ed.file.id + "']"),
+                tab_title;
 
-            $.post("/file_save/", {path: ed.file.path, dir: ed.file.dir, content: content, new_title: new_title}, function (data) {
-                var v = $.parseJSON(data),
-                    tab_title;
+            new_title = new_title || ed.file.title;
 
-                if (v.msg) {
-                    that.flash(v.msg, true);
-                    return;
-                }
-                
+            that.post("/file_save/", {"path": ed.file.path, "dir": ed.file.dir, "content": content,
+                    "new_title": new_title, "new_dir": dir}, function (v) {
+
                 ed.file.content = content;
                 that.dom.tabs.find("li[data-id='" + ed.file.id + "']").find("sup").html("");
                 ed.modified = false;
 
                 // If Save as...
-                if (new_title) {
-                    ed.title = new_title;
-                    ed.file.title = new_title;
-                    tab_title = new_title;
-                    if (ed.file.dir)
-                        tab_title += " - " + ed.file.dir;
+                ed.title = new_title;
+                ed.file.title = new_title;
+                ed.file.path = ed.file.dir + "/" + new_title;
+                el.html(new_title);
+                
+                // If Drag and Drop
+                if (target) {
+                    ed.file.dir = dir;
+                    ed.file.path = ed.file.dir + "/" + new_title;
+                    
+                    // Moved to new project?
+                    if (target.is_project) {
+                        that.projects[ed.file.project].files[ed.file.id] = null;
+                        ed.file.project = target.id;
+                    }
 
-                    that.dom.tabs.find("li[data-id='" + ed.id + "']").find("a").html(tab_title + " <sup></sup>");
-                    $(that.dom.file.tree_item + "[data-id='" + ed.id + "']").html(new_title);
+                    that.helpers.remove_file(ed.file.id);
+                    that.helpers.render_file(ed.file, target.is_project ? null : target);
                 }
+
+                // Tab if file opened in editor
+                tab_title = new_title;
+                if (ed.file.dir)
+                    tab_title += " - " + ed.file.dir;
+                that.dom.tabs.find("li[data-id='" + ed.id + "']").find("a").html(tab_title + " <sup></sup>");
 
                 that.flash("File saved");
 
@@ -120,6 +127,14 @@
                 if (!title) return;
                 that.file.save_existing(ed, close_on_success, false, title);
             });
+        },
+
+        /* Drag and Drop file */
+        move_file: function (file, target) {
+            if (!file) return false;
+            if (!target) return false;
+            var ed = that.editors[file.id] || {"file": file};
+            that.file.save_existing(ed, false, false, file.title, target);
         },
 
         /* Delete file */

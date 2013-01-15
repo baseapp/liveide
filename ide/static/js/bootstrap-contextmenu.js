@@ -39,11 +39,11 @@
 
       if ($this.is('.disabled, :disabled')) return
       
-      if ($this.attr("class") == "project-click")
+      if ($this.hasClass("project-click"))
         LiveIDE.handle.project_click(e, $this)
-      else if ($this.attr("class") == "folder-click")
+      else if ($this.hasClass("folder-click"))
         LiveIDE.handle.folder_click(e, $this)
-      else if ($this.attr("class").search("liveide-file") > -1)
+      else if ($this.hasClass("liveide-file") > -1)
         LiveIDE.handle.file_click(e, $this);
 
       clearMenus()

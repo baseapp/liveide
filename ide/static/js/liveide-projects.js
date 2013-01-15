@@ -144,34 +144,68 @@
             });
         },
 
+        /* Rename or Move folder */
+        force_move: function (folder, title, target) {
+            var dir = target ? target.path : "";
+
+            $.post("/folder_rename/", {"path": folder.path, "dir": folder.dir, "new_title": title, "new_dir": dir}, function (data) {
+                var v = $.parseJSON(data),
+                    el = $(".folder-click[data-id='" + folder.id + "']"),
+                    old_title = folder.title,
+                    old_dir = folder.dir,
+                    old_path = folder.path;
+
+                if (v.msg) {
+                    that.flash(v.msg, true);
+                    return;
+                }
+
+                folder.title = title;
+                if (target) {
+                    folder.dir = dir;
+                    // Moved to new project?
+                    if (target.is_project) {
+                        that.projects[folder.project].folders[folder.id] = null;
+                        folder.project = target.id;
+                    }
+                }
+                folder.path = folder.dir + "/" + folder.title;
+
+                // Change attrs for files in this folder
+                $.each(folder.files, function (k, v) {
+                    v.dir = v.dir.replace(old_path, folder.path);
+                    v.path = v.path.replace(old_path, folder.path);
+                });
+
+                that.active.dir = folder.path;
+                that.dom.project.active.html(folder.path);
+                
+                // DOM
+                el.html(title);
+                if (target) {
+                    that.helpers.remove_folder(folder.id);
+                    that.helpers.render_folder(folder, target.is_project ? null : target);
+                }
+                
+                that.flash("Folder renamed");
+            });
+        },
+
         /* Rename folder */
         rename_folder: function (folder) {
             bootbox.prompt("Rename " + folder.title + " as", function(title) {
                 if (!title) return;
 
-                $.post("/folder_rename/", {"path": folder.path, "dir": folder.dir, "new_title": title}, function (data) {
-                    var v = $.parseJSON(data),
-                    old_title = folder.title;
-
-                    if (v.msg) {
-                        that.flash(v.msg, true);
-                        return;
-                    }
-
-                    folder.title = title;
-
-                    // Change attrs for files in this folder
-                    $.each(folder.files, function (k, v) {
-                        v.dir = v.dir.replace(old_title, title);
-                        v.path = v.path.replace(old_title, title);
-                    });
-
-                    that.active.dir = folder.path;
-                    that.dom.project.active.html(folder.path);
-                    that.dom.project.tree.find(".folder-click[data-id='" + folder.id + "']").html(title); 
-                    that.flash("Folder renamed");
-                });
+                that.project.force_move(folder, title, null);
             });
+        },
+
+        /* Drag and Drop folder */
+        move_folder: function (folder, target) {
+            if (!folder) return false;
+            if (!target) return false;
+
+            that.project.force_move(folder, folder.title, target);
         },
 
         /* Delete folder */

@@ -9,7 +9,7 @@
 
 (function(){
     var LiveIDE = {
-        about_text: "BaseApp LiveIDE v.0.05",
+        about_text: "BaseApp LiveIDE v.0.10",
 
         /* Constants for DOM selectors */
         init_dom: function () {
@@ -75,9 +75,13 @@
                     files = [],
                     sort_files = LiveIDE.helpers.sort_files;
 
-                LiveIDE.dom.project.tree.append('<li class="liveide-project"><input type="checkbox" id="project-' + v.id + '" />'
-                    + '<label data-context-menu="#liveide-project-menu" data-id="' + v.id + '" class="project-click accept-drop" for="project-' + v.id + '">' + v.title + '</label><ul class="project-' + v.id
-                    + '"></ul></li>');
+                LiveIDE.dom.project.tree.append('<li class="liveide-project">'
+                    + '<input type="checkbox" id="project-' + v.id + '" />'
+                    + '<label data-context-menu="#liveide-project-menu" data-id="' + v.id
+                    + '" class="project-click accept-drop" for="project-' + v.id + '">'+ v.title
+                    + '</label>'
+                    + '<ul class="project-' + v.id + '"></ul>'
+                    + '</li>');
 
                 $(".project-click").contextmenu();
 
@@ -134,10 +138,15 @@
 
                 LiveIDE.projects[v.project].folders[v.id] = v;
 
-                root.append('<li class="liveide-folder draggable" draggable="true"><input type="checkbox" id="folder-' + v.id + '" />'
-                        + '<label data-context-menu="#liveide-folder-menu" data-id="' + v.id + '" data-project="' + v.project
-                        + '" data-path="' + v.path + '" class="folder-click accept-drop" for="folder-' + v.id + '">'
-                        + v.title + '</label><ul class="folder-' + v.id + '"></ul></li>');
+                root.append('<li class="liveide-folder">'
+                    + '<input type="checkbox" id="folder-' + v.id + '" />'
+                    + '<label data-context-menu="#liveide-folder-menu" data-id="' + v.id
+                    + '" data-project="' + v.project + '" data-path="' + v.path
+                    + '" draggable="true" class="folder-click accept-drop draggable"'
+                    + ' for="folder-' + v.id + '">' + v.title
+                    + '</label>'
+                    + '<ul class="folder-' + v.id + '"></ul>'
+                    + '</li>');
                 
                 $(".folder-click").contextmenu();
 
@@ -336,10 +345,9 @@
             /* File -> Save as ... */
             this.dom.file.save_as.on("click", function (e) {
                 e.preventDefault();
-
                 var ed = that.active.editor;
                 if (!ed) return;
-                
+
                 if (ed.file)
                     that.file.save_as_existing(ed)
                 else
@@ -579,19 +587,23 @@
 
                 // Drag & Drop inside browser
                 e.originalEvent.dataTransfer.setData('text/html', $this.html());
+                e.originalEvent.dataTransfer.setData('item', JSON.stringify({
+                    "title": $this.html(),
+                    "id": $this.data("id"),
+                    "project": $this.data("project"),
+                    "is_folder": !$this.hasClass("liveide-file") 
+                }));
 
                 // Download file by drag & drop
                 if ($this.hasClass("liveide-file")) {
-                    // set current file as active
-                    that.handle.file_click(e, $this)
-
-                    var file = that.active.file,
+                    var file = $this.data("project") ? that.projects[$this.data("project")].files[$this.data("id")] : that.files[$this.data("id")],
                         loc = window.location,
                         url;
 
                     if(file) {
                         url = "application/octet-stream:" + file.title + ":"
-                            + loc.protocol + "//" + loc.host + "/file_downoad/?filename=" + file.title + "&path=" + file.path;
+                            + loc.protocol + "//" + loc.host + "/file_downoad/?filename="
+                            + file.title + "&path=" + file.path;
 
                         e.originalEvent.dataTransfer.setData("DownloadURL", url);
                     }
@@ -616,7 +628,34 @@
                 e.stopPropagation();
                 this.classList.remove('over');
 
-                console.log(e.originalEvent.dataTransfer);
+                var target = $(this),
+                    new_parent,
+                    item = $.parseJSON(e.originalEvent.dataTransfer.getData("item"));
+
+                // Drop on itself not processed
+                if (item.id == target.data("id")) return false;
+
+                // Drop allowed on Project or Folder
+                if (target.hasClass("project-click"))
+                    target = that.projects[target.data("id")]
+                else
+                    target = that.projects[target.data("project")].folders[target.data("id")];
+
+                if (item.is_folder) {
+                    // Move Folder
+                    item = that.projects[item.project].folders[item.id];
+                    
+                    that.project.move_folder(item, target);
+                } else {
+                    // Move File
+                    if (item.project)
+                        item = that.projects[item.project].files[item.id]
+                    else
+                        item = that.files[item.id];
+                    
+                    that.file.move_file(item, target);
+                }
+
                 return false;
             });
     	},

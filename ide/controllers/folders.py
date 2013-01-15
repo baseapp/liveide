@@ -57,7 +57,7 @@ def folder_create():
 @post("/folder_rename/")
 def folder_rename():
     '''
-    Rename folder
+    Rename/Move folder
     '''
 
     user_id = User().id
@@ -65,13 +65,14 @@ def folder_rename():
     file_path = request.POST.get("path")
     new_title = request.POST.get("new_title")
     rel_dir = request.POST.get("dir", "")
+    new_dir = request.POST.get("new_dir") or rel_dir
 
     if not file_path:
         return json.dumps({"msg": "Specify folder name!"})
 
-    if new_title:
+    if (path+file_path != path+new_dir+"/"+new_title):
         try:
-            os.rename(path + file_path, path + rel_dir + "/" + new_title)
+            os.rename(path + file_path, path + new_dir + "/" + new_title)
         except:
             return json.dumps({"msg": "Error renaming folder!"})
 
