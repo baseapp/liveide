@@ -198,10 +198,11 @@
             $("pre#" + editor.dom_id).remove();
             that.dom.tabs.find("li[data-id='" + editor.id + "']").remove();
             
-            that.editors[editor.id] = null;
+            delete that.editors[editor.id];
 
             that.active.editor = null;
             that.active.file = null;
+            $(that.dom.file.tree_item).removeClass("active");
         },
 
         run: function (editor) {

@@ -46,6 +46,8 @@
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
         <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-close">Close Project</a></li>
+        <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-project-remove">Delete Project</a></li>
     </ul>
 

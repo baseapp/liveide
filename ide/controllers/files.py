@@ -162,6 +162,8 @@ def file_save():
 	new_title = request.POST.get("new_title")
 	rel_dir = request.POST.get("dir", "")
 	new_dir = request.POST.get("new_dir") or rel_dir
+	if new_dir:
+		new_dir += "/"
 
 	if not file_path:
 		return json.dumps({"msg": "Specify file name!"})
@@ -176,13 +178,13 @@ def file_save():
 			fo.close()
 
 	# Save as... / Move
-	if (path+file_path != path+new_dir+"/"+new_title):
+	if (path+file_path != path+new_dir+new_title):
 
-		if os.path.exists(path+new_dir+"/"+new_title):
+		if os.path.exists(path+new_dir+new_title):
 			return json.dumps({"msg": "Destination file exists!"})
 
 		try:
-			os.rename(path + file_path, path + new_dir + "/" + new_title)
+			os.rename(path + file_path, path + new_dir + new_title)
 		except:
 			return json.dumps({"msg": "Error renaming file!"})
 
