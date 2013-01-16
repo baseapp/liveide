@@ -177,6 +177,10 @@ def file_save():
 
 	# Save as... / Move
 	if (path+file_path != path+new_dir+"/"+new_title):
+
+		if os.path.exists(path+new_dir+"/"+new_title):
+			return json.dumps({"msg": "Destination file exists!"})
+
 		try:
 			os.rename(path + file_path, path + new_dir + "/" + new_title)
 		except:

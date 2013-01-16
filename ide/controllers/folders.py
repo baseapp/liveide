@@ -71,6 +71,10 @@ def folder_rename():
         return json.dumps({"msg": "Specify folder name!"})
 
     if (path+file_path != path+new_dir+"/"+new_title):
+
+        if os.path.exists(path+new_dir+"/"+new_title):
+            return json.dumps({"msg": "Destination folder exists!"})
+
         try:
             os.rename(path + file_path, path + new_dir + "/" + new_title)
         except:
