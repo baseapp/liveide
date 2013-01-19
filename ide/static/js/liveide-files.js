@@ -16,16 +16,20 @@
     LiveIDE.file = {
         /* Create */
         create: function () {
-            // bootbox.prompt("New file name", function(title) {
-            //     if (!title) return;
-            //     that.add_editor(null, title);
-            // });
-            that.add_editor(null, "Untitled");
+            if (that.active.project)
+                that.add_editor(null, "Untitled")
+            else
+                bootbox.alert("Select active project first!");
         },
 
         /* Save new file */
         save_new: function (ed, close_on_success, run_on_success) {
             var content = ed.editor.getSession().getValue();
+
+            if (ed.title == "Untitled") {
+                that.file.save_as_new(ed, close_on_success);
+                return;
+            }
 
             that.post("/file_create/", {"title": ed.title, "project": ed.project ? ed.project.id : "", 
                     "dir": ed.dir, "content": content}, function (v) {
@@ -60,7 +64,7 @@
                 ed.title = title;
                 tab_title = title;
                 if (ed.project)
-                    tab_title += ed.project.title;
+                    tab_title += " - " + ed.project.title;
 
                 that.dom.tabs.find("li[data-id='" + ed.id + "']").find("a").html(tab_title + " <sup>" + is_modified + '</sup>');
 

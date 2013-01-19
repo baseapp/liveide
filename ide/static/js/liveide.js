@@ -20,6 +20,7 @@
                 tabs: $(".liveide-tabs"), // Wrapper for tabs
                 console: $(".liveide-console"),
                 line_number: ".liveide-line-number",
+                refresh: $(".liveide-tree-refresh"),
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
@@ -658,16 +659,33 @@
 
                 return false;
             });
+
+            /* -- REFRESH PROJECTS TREE ------------------------------------ */
+            that.dom.refresh.on("click", function (e) {
+                e.preventDefault();
+                that.flash("Refreshing...");
+                $("ul.liveide-projects-tree").html("");
+                that.load_projects();
+            });
     	},
 
         load_projects: function () {
-            var that = this;
+            var that = this,
+                has_project = false;
+
+            that.flash("Loading projects...");
 
             $.getJSON("/projects/", {}, function (data) {
                 $.each(data, function (i, v) {
+                    has_project = true;
                     that.projects[v.id] = v;
                     that.helpers.render_project(v);
                 });
+
+                if (!has_project)
+                    that.flash("Welcome to LiveIDE! Create a project to start working.")
+                else
+                    that.flash("Projects data loaded");
             });
         },
 
@@ -722,10 +740,12 @@
             this.init_layout();
             this.init_handlers();
             this.load_projects();
-            this.load_files();
-            this.add_editor(null, 'Untitled') //, 'print "Hello World!"');            
+            //this.load_files();
+            //this.add_editor(null, 'Untitled') //, 'print "Hello World!"');            
 
             bootbox.animate(false);
+
+            $(".liveide-project").contextmenu();
 
             return true;
     	}

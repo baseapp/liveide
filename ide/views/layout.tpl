@@ -31,6 +31,10 @@
         <p></p>
     </div>
 
+    <ul id="liveide-tree-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
+        <li><a tabindex="-1" href="#" class="liveide-tree-refresh">Refresh</a></li>
+    </ul>
+
     <ul id="liveide-file-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
         <li><a tabindex="-1" href="#" class="liveide-file-save-as">Rename...</a></li>
         <li class="divider"></li>
@@ -47,8 +51,10 @@
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-project-close">Close Project</a></li>
+        <!--
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-project-remove">Delete Project</a></li>
+        -->
     </ul>
 
     <ul id="liveide-folder-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
@@ -125,8 +131,10 @@
                                 <li><a href="#" class="liveide-project-rename">Rename...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-close">Close Project</a></li>
+                                <!--
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-remove">Delete Project</a></li>
+                                -->
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-settings">Settings</a></li>
                             </ul>
@@ -193,7 +201,7 @@
             <div class="css-treeview">
                 <ul>
                     <li>
-                        <input type="checkbox" id="projects-tree-0" checked /><label class="liveide-project" data-id="" for="projects-tree-0">Projects</label>
+                        <input type="checkbox" id="projects-tree-0" checked /><label class="liveide-project" data-id="" data-context-menu="#liveide-tree-menu" for="projects-tree-0">My Projects</label>
                         <ul class="liveide-projects-tree">
                             <!-- WRAPPER FOR FINDER -->
                         </ul>
