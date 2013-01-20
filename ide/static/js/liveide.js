@@ -46,6 +46,7 @@
                     close: $(".liveide-project-close"),
                     remove: $(".liveide-project-remove"),
                     settings: $(".liveide-project-settings"),
+                    download: $(".liveide-project-download"),
                     tree: $(".liveide-projects-tree"),
                     tree_item: ".liveide-project"
                 },
@@ -497,6 +498,13 @@
                 e.preventDefault();
                 if (that.active.project)
                     that.project.settings(that.active.project);
+            });
+
+            /* Project -> Download */
+            this.dom.project.download.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.project)
+                    window.open("/project_downoad/?id=" + that.active.project.id);
             });
 
             /* Folder -> New */

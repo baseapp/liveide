@@ -55,6 +55,8 @@
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-project-remove">Delete Project</a></li>
         -->
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-download">Download project</a></li>
     </ul>
 
     <ul id="liveide-folder-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
@@ -140,6 +142,8 @@
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-remove">Delete Project</a></li>
                                 -->
+                                <li class="divider"></li>
+                                <li><a href="#" class="liveide-project-download">Download project</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-settings">Settings</a></li>
                             </ul>

@@ -70,6 +70,35 @@ def project_open():
 
 
 @login_required
+@get('/project_downoad/')
+def project_downoad():
+	'''
+	ZIPs project and returns resulting archive
+	'''
+
+	user = User()
+	item = models.Project.find_one({"id": request.GET.get("id")})
+
+	if user.id != item.user_id:
+		return "User ID not match with project ID!"
+
+	filename = shutil.make_archive(item.title, "zip", item.abs_path())
+
+	try:
+		fo = open(filename, "rb")
+		content = fo.read()
+	except:
+		content = "Error reading file!"
+	finally:
+		fo.close()
+		os.remove(filename)
+
+	response.content_type = 'application/zip'
+	response.headers['Content-Disposition'] = 'attachment; filename="%s.zip"' % item.title
+	return content
+
+
+@login_required
 @post('/project_remove/')
 def project_remove():
 	'''
