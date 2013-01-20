@@ -96,24 +96,28 @@ class Project(goatfish.Model):
         '''
         Returns settings from `liveideproject` file (if present)
         '''
-        try:
-            fo = open(self.abs_path() + "/.liveideproject", "rb")
+        project_settings = {}
+
+        if os.path.exists(self.abs_path() + "/.liveideproject"):
             try:
-                project_settings = json.loads(fo.read())
-            except:
-                project_settings = {}
-        finally:
-            fo.close()
+                fo = open(self.abs_path() + "/.liveideproject", "rb")
+                try:
+                    project_settings = json.loads(fo.read())
+                except:
+                    pass
+            finally:
+                fo.close()
+        
         return project_settings
 
-    def json(self):
+    def json(self, with_tree=False):
         return {
             "is_project": True,
             "is_open": False,
             "id": self.id,
             "title": self.title,
             "user_id": self.user_id,
-            "tree": {}, # self.get_files(),
+            "tree": self.get_files() if with_tree else {},
             "settings": self.get_settings(),
             "path": self.title,
             "dir": ""

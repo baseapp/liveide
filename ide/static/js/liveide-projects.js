@@ -260,6 +260,51 @@
                 that.active.folder = null;
                 that.dom.project.active.html("");
             });
+        },
+
+        /* Project upload */
+        upload: function () {
+            bootbox.upload("Choose ZIP archive", "/project_upload/", function($form) {
+                if (!$form) return;
+
+                var form_data = new FormData();
+                form_data.append("file", $form.find("input[type='file']")[0].files[0]);
+
+                $.ajax({
+                    url: $form.attr("action"),
+                    processData: false,
+                    contentType: false,
+                    data: form_data, // $form.serialize(),
+                    type: $form.attr("method"),
+                    success: function(data, text) {
+                        // handle lack of response (error callback isn't called in this case)
+                        if (undefined === data) {
+                            if (!window.navigator.onLine)
+                                that.flash("No connection. Try again.", true)
+                            else
+                                that.flash("No response from server. Try again.", true);
+                            return;
+                        }
+
+                        v = JSON.parse(data);
+
+                        if (v.msg) {
+                            that.flash(v.msg, true);
+                            return;
+                        }
+
+                        that.projects[v.id] = v;
+
+                        that.helpers.render_project(v);
+                        that.dom.project.open.parent().find("ul").append("<li><a href='#' class='liveide-project-to-open' data-id='" + v.id
+                            + "'>" + v.title + "</a></li>");
+                        that.flash("Project uploaded");
+                    },
+                    error: function() {
+                        that.flash("Server error or no connection. Please try again.", true);
+                    }
+                });
+            });
         }
     }
     

@@ -33,6 +33,8 @@
 
     <ul id="liveide-tree-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
         <li><a tabindex="-1" href="#" class="liveide-tree-refresh">Refresh</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-upload">Upload project</a></li>
     </ul>
 
     <ul id="liveide-file-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
@@ -144,6 +146,7 @@
                                 -->
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-download">Download project</a></li>
+                                <li><a href="#" class="liveide-project-upload">Upload project</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-settings">Settings</a></li>
                             </ul>

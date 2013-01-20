@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+import zipfile
 
 from ide.bottle import *
 from ide.bottleauth import User
@@ -96,6 +97,35 @@ def project_downoad():
 	response.content_type = 'application/zip'
 	response.headers['Content-Disposition'] = 'attachment; filename="%s.zip"' % item.title
 	return content
+
+
+@login_required
+@post("/project_upload/")
+def project_upload():
+	'''
+	Upload project as ZIP archive
+	'''
+
+	user_id = User().id
+	f = request.POST.get("file")
+	content = f.file.read()
+
+	filename = f.filename
+	title = filename.replace(".zip", "")
+	path = "%s%i/" % (settings.PROJECTS_ROOT, user_id)
+
+	if not os.path.exists(path + title):
+		with zipfile.ZipFile(f.file, "r") as z:
+			z.extractall(path)
+
+		item = models.Project()
+		item.user_id = User().id
+		item.title = title
+		item.save()
+
+		return json.dumps(item.json(with_tree=True))
+
+	return json.dumps({"msg": "Directory exists!"})
 
 
 @login_required

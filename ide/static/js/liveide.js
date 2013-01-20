@@ -47,6 +47,7 @@
                     remove: $(".liveide-project-remove"),
                     settings: $(".liveide-project-settings"),
                     download: $(".liveide-project-download"),
+                    upload: $(".liveide-project-upload"),
                     tree: $(".liveide-projects-tree"),
                     tree_item: ".liveide-project"
                 },
@@ -383,6 +384,7 @@
                     window.open("/file_downoad/?filename=" + file.title + "&path=" + file.path);
             });
 
+            /* File -> Upload */
             this.dom.file.upload.on("click", function (e) {
                 e.preventDefault();
                 that.file.upload();
@@ -505,6 +507,12 @@
                 e.preventDefault();
                 if (that.active.project)
                     window.open("/project_downoad/?id=" + that.active.project.id);
+            });
+
+            /* Project -> Upload */
+            this.dom.project.upload.on("click", function (e) {
+                e.preventDefault();
+                that.project.upload();
             });
 
             /* Folder -> New */
@@ -724,6 +732,17 @@
                     that.flash("Projects data loaded");
             });
         },
+
+        // load_files: function () {
+        //     var that = this;
+            
+        //     $.getJSON("/files/", {}, function (data) {
+        //         $.each(data, function (i, v) {
+        //             that.files[v.id] = v;
+        //             that.helpers.render_file(v);
+        //         });
+        //     });
+        // },
 
     	init: function (params) {
             //$.ajaxSetup({ cache:false });
