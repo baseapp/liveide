@@ -52,6 +52,23 @@ def project_create():
 
 	return json.dumps(item.json())
 
+
+@login_required
+@get('/project_open/')
+def project_open():
+	'''
+	Loads project tree
+	'''
+
+	user = User()
+	item = models.Project.find_one({"id": request.GET.get("id")})
+
+	if user.id != item.user_id:
+		return json.dumps({"msg": "User ID not match with project ID!"})
+
+	return json.dumps(item.get_files())
+
+
 @login_required
 @post('/project_remove/')
 def project_remove():

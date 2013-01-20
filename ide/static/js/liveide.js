@@ -42,6 +42,7 @@
                     active: $(".liveide-active-project"),
                     create: $(".liveide-project-new"),
                     rename: $(".liveide-project-rename"),
+                    open: $(".liveide-project-open"),
                     close: $(".liveide-project-close"),
                     remove: $(".liveide-project-remove"),
                     settings: $(".liveide-project-settings"),
@@ -215,7 +216,7 @@
     	},
 
         /* Add ace editor instance, open file or given content in it */
-    	add_editor: function (file, title, content) {
+    	add_editor: function (file, title, content, modified) {
             // Param `file` can be empty,
             // this means file not was saved/don't persists on FS
             // For those files temp id will be with `-` prefix.
@@ -226,7 +227,7 @@
                 dir = file ? file.dir : that.active.dir,
                 dom_id = this.dom.editor + id,
                 tab_title,
-                is_modified = "", //file ? "" : "*",
+                is_modified = modified ? "*" : "", //file ? "" : "*",
                 project,
                 ed;
 
@@ -255,7 +256,7 @@
                 folder: that.active.folder,
                 // ace editor object
                 editor: ace.edit(dom_id),
-                modified: false // file ? false : true
+                modified: modified ? true : false
             };
             this.editors[id] = ed;
 
@@ -464,13 +465,23 @@
                 e.preventDefault();
                 
                 if (project) {
-                    // collapse project in tree
-                    that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").parent().find("input[type='checkbox']").attr("checked", false);
+                    // remove project subtree from Finder
+                    that.helpers.remove_project(project.id);
+                    project.is_open = false;
+
+                    // // collapse project in tree
+                    // that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").parent().find("input[type='checkbox']").attr("checked", false);
+                    
                     // close all open project files
                     $.each(that.editors, function (k, ed) {
                         if (ed.file && ed.file.project && ed.file.project == project.id)
                             that.file.close(ed);
-                    })
+                    });
+
+                    that.active.project = null;
+                    that.active.dir = "";
+                    that.active.folder = null;
+                    that.dom.project.active.html("");
                 }
             });
 
@@ -665,38 +676,44 @@
                 e.preventDefault();
                 that.flash("Refreshing...");
                 $("ul.liveide-projects-tree").html("");
-                that.load_projects();
+                that.load_projects(true);
             });
+
+            $(document).on("click", ".liveide-project-to-open", function (e) {
+                e.preventDefault();
+
+                var project = that.projects[$(this).data("id")];
+
+                if (!project.is_open)
+                    that.project.open(project);
+            })
     	},
 
-        load_projects: function () {
+        load_projects: function (is_refresh) {
             var that = this,
-                has_project = false;
+                has_project = false,
+                menu = this.dom.project.open.parent().find("ul");
 
             that.flash("Loading projects...");
 
             $.getJSON("/projects/", {}, function (data) {
                 $.each(data, function (i, v) {
                     has_project = true;
-                    that.projects[v.id] = v;
-                    that.helpers.render_project(v);
+                    if (that.projects[v.id] && that.projects[v.id].is_open)
+                        that.project.open(that.projects[v.id], true)
+                    else
+                        that.projects[v.id] = v;
+                    //that.helpers.render_project(v);
+
+                    if (!is_refresh)
+                        menu.append("<li><a href='#' class='liveide-project-to-open' data-id='" + v.id
+                            + "'>" + v.title + "</a></li>");
                 });
 
                 if (!has_project)
                     that.flash("Welcome to LiveIDE! Create a project to start working.")
                 else
                     that.flash("Projects data loaded");
-            });
-        },
-
-        load_files: function () {
-            var that = this;
-
-            $.getJSON("/files/", {}, function (data) {
-                $.each(data, function (i, v) {
-                    that.files[v.id] = v;
-                    that.helpers.render_file(v);
-                });
             });
         },
 
@@ -740,8 +757,6 @@
             this.init_layout();
             this.init_handlers();
             this.load_projects();
-            //this.load_files();
-            //this.add_editor(null, 'Untitled') //, 'print "Hello World!"');            
 
             bootbox.animate(false);
 

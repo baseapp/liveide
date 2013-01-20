@@ -109,10 +109,11 @@ class Project(goatfish.Model):
     def json(self):
         return {
             "is_project": True,
+            "is_open": False,
             "id": self.id,
             "title": self.title,
             "user_id": self.user_id,
-            "tree": self.get_files(),
+            "tree": {}, # self.get_files(),
             "settings": self.get_settings(),
             "path": self.title,
             "dir": ""

@@ -29,9 +29,35 @@
 
                     that.projects[v.id] = v;
                     that.helpers.render_project(v);
+
+                    that.active.project = that.projects[v.id];
+                    that.active.dir = that.active.project.title;
+                    that.active.folder = null;
+                    that.dom.project.active.html(that.active.project.title);
+                    that.add_editor(null, 'main.py', 'print "Hello World!"', true);
+
                     that.flash("Project created");
                 });
             });
+        },
+
+        /* Open, e.g. - load tree of files and dirs inside project */
+        open: function (project, is_refresh) {
+            $.get("/project_open/", {"id": project.id}, function (data) {
+                    var v = $.parseJSON(data);
+
+                    if (v.msg) {
+                        that.flash(v.msg, true);
+                        return;
+                    }
+
+                    project.is_open = true;
+                    project.tree = v;
+                    that.helpers.render_project(project);
+
+                    if (!is_refresh)
+                        that.flash("Project opened");
+                });
         },
 
         /* Rename */

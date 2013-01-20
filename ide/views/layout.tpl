@@ -127,7 +127,12 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Project</a>
                             <ul class="dropdown-menu">
                                 <li><a href="#" class="liveide-project-new">Create Project</a></li>
-                                <li><a href="#">Open...</a></li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="liveide-project-open">Open</a>
+                                    <ul class="dropdown-menu">
+                                        <!-- PLACEHOLDER FOR PROJECTS TO OPEN -->
+                                    </ul>
+                                </li>
                                 <li><a href="#" class="liveide-project-rename">Rename...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-close">Close Project</a></li>

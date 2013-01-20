@@ -212,22 +212,13 @@
         run: function (editor) {
             if (!editor) return;
             
-            if (editor.modified)
-                bootbox.confirm("Save " + editor.title + " before run?", function(result) {
-                    if (!result) {
-                        // Run without saving
-                        if (editor.file) // only if file on FS
-                            that.file.force_run(editor);
-                        return;
-                    }
-
-                    // Run after save succeed
-                    if (editor.file)
-                        that.file.save_existing(editor, false, true)
-                    else
-                        that.file.save_new(editor, false, true);
-                });
-            else
+            if (editor.modified) {
+                // Run after save succeed
+                if (editor.file)
+                    that.file.save_existing(editor, false, true)
+                else
+                    that.file.save_new(editor, false, true);
+            } else
                 that.file.force_run(editor);
         },
 
