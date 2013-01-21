@@ -110,20 +110,49 @@
                                 <li><a href="#" class="liveide-edit-command" data-id="findprevious">Find Previous</a></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="replace">Replace</a></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="replaceall">Replace all</a></li>
-                                <li class="divider"></li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">View</a>
+                            <ul class="dropdown-menu">
                                 <li class="dropdown-submenu">
-                                    <a href="#" class="liveide-edit-syntax">Syntax</a>
+                                    <a href="#" class="liveide-view-syntax">Syntax</a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="python">Python</a></li>
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="c_cpp">C</a></li>
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="css">CSS</a></li>
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="html">HTML</a></li>
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="xml">XML</a></li>
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="javascript">JavaScript</a></li>
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="text">Text</a></li>
-                                        <li><a href="#" class="liveide-edit-syntax" data-id="markdown">Markdown</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="python">Python</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="c_cpp">C</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="css">CSS</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="html">HTML</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="xml">XML</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="javascript">JavaScript</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="text">Text</a></li>
+                                        <li><a href="#" class="liveide-view-syntax" data-id="markdown">Markdown</a></li>
                                     </ul>
                                 </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="liveide-view-indentation">Indentation</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#" class="liveide-view-indentation" data-id="2">2</a></li>
+                                        <li><a href="#" class="liveide-view-indentation" data-id="4">4</a></li>
+                                        <li><a href="#" class="liveide-view-indentation" data-id="8">8</a></li>
+                                    </ul>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="dropdown-submenu">
+                                    <a href="#" class="liveide-view-font">Font Size</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#" class="liveide-view-font" data-id="12px">12</a></li>
+                                        <li><a href="#" class="liveide-view-font" data-id="13px">13</a></li>
+                                        <li><a href="#" class="liveide-view-font" data-id="14px">14</a></li>
+                                        <li><a href="#" class="liveide-view-font" data-id="15px">15</a></li>
+                                        <li><a href="#" class="liveide-view-font" data-id="16px">16</a></li>
+                                        <li><a href="#" class="liveide-view-font" data-id="18px">18</a></li>
+                                        <li><a href="#" class="liveide-view-font" data-id="20px">20</a></li>
+                                    </ul>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="#" class="liveide-view-wordwrap">Word Wrap</a></li>
+                                <li><a href="#" class="liveide-view-ruler">Ruler</a></li>
                             </ul>
                         </li>
                         

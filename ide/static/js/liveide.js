@@ -34,8 +34,15 @@
                 },
 
                 edit: {
-                    command: $(".liveide-edit-command"),
-                    syntax: $(".liveide-edit-syntax")
+                    command: $(".liveide-edit-command")
+                },
+
+                view: {
+                    syntax: $(".liveide-view-syntax"),
+                    indentation: $(".liveide-view-indentation"),
+                    font: $(".liveide-view-font"),
+                    wordwrap: $(".liveide-view-wordwrap"),
+                    ruler: $(".liveide-view-ruler")
                 },
 
                 project: {
@@ -434,9 +441,11 @@
                 }
             });
 
-            this.dom.edit.syntax.on("click", function (e) {
+            /* -- MENU VIEW ------------------------------------------------ */
+            
+            /* View -> Syntax */
+            this.dom.view.syntax.on("click", function (e) {
                 e.preventDefault();
-
                 var id = $(this).data("id");
 
                 if (id && that.active.editor)
@@ -445,6 +454,46 @@
                     // Fix for Edit -> Syntax submenu item on touch devices
                     // So it can be clickable and not hide syntax options
                     return false;
+            });
+
+            /* View -> Indentation */
+            this.dom.view.indentation.on("click", function (e) {
+                e.preventDefault();
+                var id = $(this).data("id");
+
+                if (id && that.active.editor)
+                    that.active.editor.editor.getSession().setTabSize(parseInt(id))
+                else
+                    return false;
+            });
+
+            /* View -> Font Size */
+            this.dom.view.font.on("click", function (e) {
+                e.preventDefault();
+                var id = $(this).data("id");
+
+                if (id && that.active.editor)
+                    $("#"+that.active.editor.dom_id).css("fontSize", id)
+                else
+                    return false;
+            });
+
+            /* View -> Word Wrap */
+            this.dom.view.wordwrap.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.editor) {
+                    var session = that.active.editor.editor.getSession();
+                    session.setUseWrapMode(!session.getUseWrapMode());
+                }
+            });
+
+            /* View -> Ruler */
+            this.dom.view.ruler.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.editor) {
+                    var ed = that.active.editor.editor;
+                    ed.setShowPrintMargin(!ed.getShowPrintMargin());
+                }
             });
 
             /* -- MENU PROJECT --------------------------------------------- */
