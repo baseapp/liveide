@@ -647,12 +647,36 @@
             // Click in console on error line number
             $(document).on("click", this.dom.line_number, function (e) {
                 e.preventDefault();
-                var line = $(this).text().replace("line ", ""),
-                    ed = that.active.editor;
+                var id = $(this).data("id"),
+                    line = parseInt($(this).text().replace("line ", "")),
+                    ed = that.active.editor,
+                    is_open = false;
 
-                if (ed) {
-                    ed.editor.gotoLine(parseInt(line));
+                if (ed && ed.file.path.indexOf(id) > -1) { // Error in currently opened file
+                    ed.editor.gotoLine(line);
                     ed.editor.focus();
+                } else {
+                    $.each(that.editors, function (i, v) {
+                        if (v.file && v.file.path.indexOf(id) > -1) {
+                            is_open = true;
+                            that.focus_editor(v.id);
+                            that.active.editor.editor.gotoLine(line);
+                        }
+                    });
+
+                    // Lookup in project files for source of error
+                    if (!is_open)
+                        $.each(that.active.project.files, function (k, file) {
+                            if (file.path.indexOf(id) > -1) {
+                                // Need to load file from FS and then open and focus
+                                $.get("/file_content/", {path: file.path}, function (data) {
+                                    file.content = data;
+                                    that.add_editor(file, file.title, file.content);
+                                    that.focus_editor(file.id);
+                                    that.active.editor.editor.gotoLine(line);
+                                });
+                            }
+                        });
                 }
             });
 
