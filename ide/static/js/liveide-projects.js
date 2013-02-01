@@ -27,6 +27,7 @@
                         return;
                     }
 
+                    v.is_open = true;
                     that.projects[v.id] = v;
                     that.helpers.render_project(v);
 
@@ -35,6 +36,8 @@
                     that.active.folder = null;
                     that.dom.project.active.html(that.active.project.title);
                     that.add_editor(null, 'main.py', 'print "Hello World!"', true);
+                    that.dom.project.open.parent().find("ul").append("<li><a href='#' class='liveide-project-to-open' data-id='" + v.id
+                        + "'>" + v.title + "</a></li>");
 
                     that.flash("Project created");
                 });
@@ -88,6 +91,30 @@
                     that.dom.project.tree.find(".project-click[data-id='" + project.id + "']").html(title);
                     that.dom.project.active.html(project.title);
                     that.flash("Project renamed");
+                });
+            });
+        },
+
+        /* Copy */
+        copy: function (project) {
+            bootbox.prompt("Copy " + project.title + " to", function(title) {
+                if (!title) return;
+
+                $.post("/project_copy/", {"id": project.id, "new_title": title}, function (data) {
+                    var v = $.parseJSON(data);
+
+                    if (v.msg) {
+                        that.flash(v.msg, true);
+                        return;
+                    }
+
+                    v.is_open = true;
+                    that.projects[v.id] = v;
+                    that.helpers.render_project(v);
+                    that.dom.project.open.parent().find("ul").append("<li><a href='#' class='liveide-project-to-open' data-id='" + v.id
+                        + "'>" + v.title + "</a></li>");
+
+                    that.flash("Project copied");
                 });
             });
         },

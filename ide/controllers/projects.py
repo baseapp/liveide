@@ -51,7 +51,7 @@ def project_create():
 	finally:
 		fo.close()
 
-	return json.dumps(item.json())
+	return json.dumps(item.json(with_tree=True))
 
 
 @login_required
@@ -196,6 +196,52 @@ def project_rename():
 		fo.close()
 
 	return "{}"
+
+
+@login_required
+@post('/project_copy/')
+def project_copy():
+	'''
+	Copy project dir and record in DB.
+	'''
+
+	user = User()
+	item = models.Project.find_one({"id": request.POST.get("id")})
+
+	if user.id != item.user_id:
+		return json.dumps({"msg": "User ID not match with project ID!"})
+
+	new_title = request.POST.get("new_title")
+
+	if not new_title:
+		return json.dumps({"msg": "Specify new name for project!"})
+
+	# New item record in DB
+	new_item = models.Project()
+	new_item.user_id = user.id
+	new_item.title = new_title
+
+	try:
+		path = "%s%i/" % (settings.PROJECTS_ROOT, item.user_id)
+		shutil.copytree(item.abs_path(), path + new_title)
+	except:
+		return json.dumps({"msg": "Error copying project!"})
+
+	new_item.save()
+
+	try:
+		fo = open(new_item.abs_path() + "/.liveideproject", "r+")
+		try:
+			project_settings = json.loads(fo.read() or "{}")
+		except:
+			project_settings = {}
+		project_settings["title"] = new_item.title
+		fo.truncate(0)
+		fo.write(json.dumps(project_settings))
+	finally:
+		fo.close()
+
+	return json.dumps(new_item.json(with_tree=True))
 
 
 @login_required

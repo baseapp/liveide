@@ -34,7 +34,7 @@
     <ul id="liveide-tree-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
         <li><a tabindex="-1" href="#" class="liveide-tree-refresh">Refresh</a></li>
         <li class="divider"></li>
-        <li><a tabindex="-1" href="#" class="liveide-project-upload">Upload project</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-upload">Upload Project</a></li>
     </ul>
 
     <ul id="liveide-file-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
@@ -49,6 +49,7 @@
         <li><a tabindex="-1" href="#" class="liveide-file-new">New File</a></li>
         <li><a tabindex="-1" href="#" class="liveide-file-upload">Upload File</a></li>
         <li><a tabindex="-1" href="#" class="liveide-project-rename">Rename...</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-copy">Copy Project...</a></li>
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
         <li class="divider"></li>
@@ -58,7 +59,7 @@
         <li><a tabindex="-1" href="#" class="liveide-project-remove">Delete Project</a></li>
         -->
         <li class="divider"></li>
-        <li><a tabindex="-1" href="#" class="liveide-project-download">Download project</a></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-download">Download Project</a></li>
     </ul>
 
     <ul id="liveide-folder-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
@@ -167,6 +168,7 @@
                                     </ul>
                                 </li>
                                 <li><a href="#" class="liveide-project-rename">Rename...</a></li>
+                                <li><a href="#" class="liveide-project-copy">Copy Project...</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-close">Close Project</a></li>
                                 <!--
@@ -174,8 +176,8 @@
                                 <li><a href="#" class="liveide-project-remove">Delete Project</a></li>
                                 -->
                                 <li class="divider"></li>
-                                <li><a href="#" class="liveide-project-download">Download project</a></li>
-                                <li><a href="#" class="liveide-project-upload">Upload project</a></li>
+                                <li><a href="#" class="liveide-project-download">Download Project</a></li>
+                                <li><a href="#" class="liveide-project-upload">Upload Project</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-settings">Settings</a></li>
                             </ul>
