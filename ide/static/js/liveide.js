@@ -51,6 +51,7 @@
                     rename: $(".liveide-project-rename"),
                     copy: $(".liveide-project-copy"),
                     open: $(".liveide-project-open"),
+                    build: $(".liveide-project-build"),
                     close: $(".liveide-project-close"),
                     remove: $(".liveide-project-remove"),
                     settings: $(".liveide-project-settings"),
@@ -517,6 +518,13 @@
                 e.preventDefault();
                 if (that.active.project)
                     that.project.copy(that.active.project);
+            });
+
+            /* Project -> Build project... */
+            this.dom.project.build.on("click", function (e) {
+                e.preventDefault();
+                if (that.active.project)
+                    that.project.build(that.active.project);
             });
 
             /* Project -> Close */

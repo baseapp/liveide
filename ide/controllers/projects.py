@@ -259,11 +259,46 @@ def project_settings():
 
 	project_settings = dict(request.POST)
 
-	#try:
-	fo = open(item.abs_path() + "/.liveideproject", "r+")
-	fo.truncate(0)
-	fo.write(json.dumps(project_settings))
-	#finally:
-	fo.close()
+	try:
+		fo = open(item.abs_path() + "/.liveideproject", "r+")
+		fo.truncate(0)
+		fo.write(json.dumps(project_settings))
+	finally:
+		fo.close()
 
 	return json.dumps(project_settings)
+
+
+@login_required
+@get("/project_build/")
+def project_build():
+	'''
+	Execute project `build` command from Settings and return output to UI
+	'''
+
+	user_id = User().id
+	item = models.Project.find_one({"id": request.GET.get("id")})
+	res = ""
+
+	if user_id != item.user_id:
+		return "User ID not match with project ID!"
+
+	settings = item.get_settings()
+	if not "build" in settings:
+		return "Specify build system in Settings first!"
+
+	p = subprocess.Popen(
+		(settings["build"]),
+		cwd=item.abs_path(),
+		stdout=subprocess.PIPE,
+		stderr=subprocess.PIPE
+	)
+	
+	output, errors = p.communicate()
+
+	res += output + "\n"
+	res += errors + "\n"
+
+	res += 'process ended with return code %i' % p.returncode
+
+	return res

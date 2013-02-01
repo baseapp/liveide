@@ -53,6 +53,8 @@
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-folder-new">New Folder</a></li>
         <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-build">Build</a></li>
+        <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-project-close">Close Project</a></li>
         <!--
         <li class="divider"></li>
@@ -60,6 +62,8 @@
         -->
         <li class="divider"></li>
         <li><a tabindex="-1" href="#" class="liveide-project-download">Download Project</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#" class="liveide-project-settings">Settings</a></li>
     </ul>
 
     <ul id="liveide-folder-menu" class="dropdown-menu context-menu liveide-dropdownmenu" role="menu">
@@ -169,6 +173,8 @@
                                 </li>
                                 <li><a href="#" class="liveide-project-rename">Rename...</a></li>
                                 <li><a href="#" class="liveide-project-copy">Copy Project...</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#" class="liveide-project-build">Build</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#" class="liveide-project-close">Close Project</a></li>
                                 <!--

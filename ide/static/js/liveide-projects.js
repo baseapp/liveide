@@ -150,12 +150,12 @@
         /* Settings of project */
         settings: function (project) {
             var s = $.extend({
-                    build: "python",
+                    build: "",
                     description: ""
                 }, project.settings),
                 form = $("<form></form>");
-            form.append("<label>Build system:</label> <input type=text name='build' value='" + s.build + "' />");
-            form.append("<label>Description:</label> <textarea name='description'>" + s.description + "</textarea>");
+            form.append("<label>Build system:</label> <input type=text class='span6' name='build' value='" + s.build + "' />");
+            form.append("<label>Description:</label> <textarea name='description' class='span6'>" + s.description + "</textarea>");
 
             bootbox.form("Project settings", form, function($form) {
                 if (!$form) return;
@@ -331,6 +331,18 @@
                         that.flash("Server error or no connection. Please try again.", true);
                     }
                 });
+            });
+        },
+
+        /* Build project */
+        build: function (project) {
+            if (!project.settings.build)
+                return that.flash("Specify build system in Settings first!", true);
+
+            $.get("/project_build/", {"id": project.id}, function (data) {
+                that.dom.console.append("<pre>" + data + "</pre>");
+                that.dom.console.find("pre:last")[0].scrollIntoView(true);
+                that.flash("Build complete");
             });
         }
     }
