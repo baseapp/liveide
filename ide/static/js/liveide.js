@@ -21,6 +21,7 @@
                 console: $(".liveide-console"),
                 line_number: ".liveide-line-number",
                 refresh: $(".liveide-tree-refresh"),
+                intellisense: "#liveide-intellisense",
                 file: {
                     create: $(".liveide-file-new"),
                     save: $(".liveide-file-save"),
@@ -791,7 +792,81 @@
 
                 if (!project.is_open)
                     that.project.open(project);
-            })
+            });
+
+            /* -- INTELLISENSE --------------------------------------------- */
+            $(document).on("keypress", ".liveide-editors", function (e) {
+                if (!(e.which == 0 && e.ctrlKey)) return true;
+                
+                // if (e.which == 32 || e.which == 13) {
+                //     that.intellisense.hide();
+                //     return true; //space or enter
+                // }
+
+                if (!that.intellisense) return true;
+
+                var ed = that.active.editor;
+                if (!ed) return;
+
+                var pos = ed.editor.getCursorPosition();
+                var pos_xy = ed.editor.renderer.textToScreenCoordinates(pos.row, pos.column);
+                var token = ed.editor.getSession().getTokenAt(pos.row, pos.column);
+
+                that.intellisense.show(token ? token.value : "", pos_xy);
+
+                // e.preventDefault();
+                // return false;
+            });
+
+            // ESC key - hide intellisense list
+            $(document).on("keydown", function (e) {
+                if (!(e.which == 27)) return true;
+                if (!that.intellisense) return true;
+
+                var ed = that.active.editor;
+                if (ed) ed.editor.focus();
+
+                that.intellisense.hide();
+                e.preventDefault();
+                return false;
+            });
+
+            // Click in editor - hide intellisense list
+            $(document).on("click", ".liveide-editors", function (e) {
+                if (!that.intellisense) return true;
+
+                var ed = that.active.editor;
+                if (ed) ed.editor.focus();
+
+                that.intellisense.hide();
+            });
+
+            /* Select value in intellisense list */
+            var intellisense_select = function (argument) {
+                var val = $(that.dom.intellisense).find("select").val();
+                var ed = that.active.editor;
+                if (!ed) return;
+
+                if (val) {
+                    ed.editor.selection.selectWordLeft();
+                    ed.editor.insert(val, true);
+                }
+
+                ed.editor.focus();
+                that.intellisense.hide();
+            }
+
+            // ... by Space / Enter button
+            $(document).on("keypress", that.dom.intellisense + " select", function (e) {
+                if (!(e.which == 32 || e.which == 13)) return true; //space or enter
+
+                intellisense_select();
+            });
+
+            // ... or with mouse click
+            $(document).on("click", that.dom.intellisense + " select", function (e) {
+                intellisense_select();
+            });
     	},
 
         load_projects: function (is_refresh) {
@@ -877,6 +952,7 @@
             bootbox.animate(false);
 
             $(".liveide-project").contextmenu();
+            this.add_editor(null, "Untitled", "", true);
 
             return true;
     	}

@@ -230,3 +230,11 @@
 	position: relative;
 	z-index: 1500;
 }
+
+#liveide-intellisense {
+	z-index: 1500;
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+}

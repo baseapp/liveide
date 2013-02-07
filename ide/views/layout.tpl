@@ -15,6 +15,7 @@
     <script src="{{static_url}}/js/liveide-projects.js"></script>
     <script src="{{static_url}}/js/liveide-files.js"></script>
     <script src="{{static_url}}/js/liveide-handlers.js"></script>
+    <script src="{{static_url}}/js/liveide-intellisense.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -76,6 +77,10 @@
         <li><a tabindex="-1" href="#" class="liveide-folder-remove">Delete Folder</a></li>
     </ul>
     
+    <div id="liveide-intellisense">
+        <select size="10"></select>
+    </div>
+
     <div class="header-top">    
         <div class="navbar navbar-fixed-top navbar-inverse row-fluid">
             <div class="sidebar">
