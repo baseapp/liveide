@@ -952,7 +952,7 @@
             bootbox.animate(false);
 
             $(".liveide-project").contextmenu();
-            //this.add_editor(null, "Untitled", "", true);
+            this.add_editor(null, "Untitled", 'print "Hello World!"', true);
 
             return true;
     	}
