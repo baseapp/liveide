@@ -35,7 +35,8 @@
                 },
 
                 edit: {
-                    command: $(".liveide-edit-command")
+                    command: $(".liveide-edit-command"),
+                    intellisense: $(".liveide-edit-intellisense")
                 },
 
                 view: {
@@ -283,6 +284,14 @@
                 that.dom.tabs.find("li[data-id='" + id + "']").find("sup").html("*");
             });
 
+            // ed.editor.getSession().selection.on('changeCursor', function(e) {
+            //     var menu = $(that.dom.intellisense);
+            //     if (menu.css("display") == "block") {
+            //         console.log(e);
+            //         e.stopPropagation();
+            //     }
+            // });
+
             // ed.editor.getSession().on('cut', function(text) {
             //     console.log(text)
             //     that.clipboardData = text;
@@ -442,6 +451,11 @@
                         ed.commands.commands.replaceall.exec(ed);
                         break;
                 }
+            });
+
+            this.dom.edit.intellisense.on("click", function (e) {
+                e.preventDefault();
+                intellisense_show();
             });
 
             /* -- MENU VIEW ------------------------------------------------ */
@@ -795,16 +809,9 @@
             });
 
             /* -- INTELLISENSE --------------------------------------------- */
-            $(document).on("keypress", ".liveide-editors", function (e) {
-                if (!(e.which == 0 && e.ctrlKey)) return true;
-                
-                // if (e.which == 32 || e.which == 13) {
-                //     that.intellisense.hide();
-                //     return true; //space or enter
-                // }
-
-                if (!that.intellisense) return true;
-
+            
+            /* Show/update intellisense list/options */
+            var intellisense_show = function (argument) {
                 var ed = that.active.editor;
                 if (!ed) return;
 
@@ -812,12 +819,63 @@
                 var pos_xy = ed.editor.renderer.textToScreenCoordinates(pos.row, pos.column);
                 var token = ed.editor.getSession().getTokenAt(pos.row, pos.column);
 
+                that.cursorPos = pos;
                 that.intellisense.show(token ? token.value : "", pos_xy);
+            }
 
-                // e.preventDefault();
-                // return false;
+            /* Select value in intellisense list */
+            var intellisense_select = function (argument) {
+                var val = $(that.dom.intellisense).find("select").val(),
+                    ed = that.active.editor,
+                    pos = ed.editor.getCursorPosition(),
+                    token = ed.editor.getSession().getTokenAt(pos.row, pos.column);
+
+                if (!ed) return;
+
+                if (val) {
+                    if (token && token.value != " ")
+                        ed.editor.selection.selectWordLeft();
+                    ed.editor.insert(val, true);
+                }
+
+                ed.editor.focus();
+                that.intellisense.hide();
+            }
+
+            /* -- SHOW INTELLISENSE ---------------------------------------- */
+            $(document).on("keypress", ".liveide-editors", function (e) {
+                if (!(e.which == 0 && e.ctrlKey)) return true;
+                intellisense_show();
             });
 
+            // Intellisense already visible - let filter while user input
+            $(document).on("keyup", ".liveide-editors", function (e) {
+                var menu = $(that.dom.intellisense),
+                    list = menu.find("select"),
+                    ed = that.active.editor;
+                if (menu.css("display") != "block") return;
+
+                // Left/RightUp/Down arrows - focus intellisense list
+                if (e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
+                    ed.editor.moveCursorToPosition(that.cursorPos);
+                    list.focus().prop("selectedIndex", 0);
+                } else
+                    intellisense_show();
+            });
+
+            /* -- SELECT VALUE IN LIST ------------------------------------- */
+            // ... by Space / Enter button
+            $(document).on("keypress", that.dom.intellisense + " select", function (e) {
+                if (!(e.which == 32 || e.which == 13)) return true; //space or enter
+                intellisense_select();
+            });
+
+            // ... or with mouse click
+            $(document).on("click", that.dom.intellisense + " select", function (e) {
+                intellisense_select();
+            });
+
+            /* -- HIDE INTELLISENSE ---------------------------------------- */
             // ESC key - hide intellisense list
             $(document).on("keydown", function (e) {
                 if (!(e.which == 27)) return true;
@@ -839,33 +897,6 @@
                 if (ed) ed.editor.focus();
 
                 that.intellisense.hide();
-            });
-
-            /* Select value in intellisense list */
-            var intellisense_select = function (argument) {
-                var val = $(that.dom.intellisense).find("select").val();
-                var ed = that.active.editor;
-                if (!ed) return;
-
-                if (val) {
-                    ed.editor.selection.selectWordLeft();
-                    ed.editor.insert(val, true);
-                }
-
-                ed.editor.focus();
-                that.intellisense.hide();
-            }
-
-            // ... by Space / Enter button
-            $(document).on("keypress", that.dom.intellisense + " select", function (e) {
-                if (!(e.which == 32 || e.which == 13)) return true; //space or enter
-
-                intellisense_select();
-            });
-
-            // ... or with mouse click
-            $(document).on("click", that.dom.intellisense + " select", function (e) {
-                intellisense_select();
             });
     	},
 

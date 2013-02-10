@@ -2,6 +2,7 @@ Live IDE
 ========
 
 Online / Offline browser based IDE for Python (and not only).
+Powered with projects management and code intellisense :)
 
 Try LiveIDE on heroku: http://liveide.herokuapp.com
 
@@ -35,13 +36,14 @@ for `ide/local_settings.py`.
  * By default registration for new users is available to all. You may first create your users and then restrict registration by disabling `SIGNUP_ENABLED` option in settings.
 
 
-Features
-========
+IDE Features
+============
 
  * Create and manage projects with subdirectories and files.
- * Run file with python interpreter on server and display output and errors in browser.
+ * Upload existing projects into IDE
+ * Run file with python interpreter on server and display output and errors in IDE console.
  * Edit files with Ace editor (syntax highlighing, code formatting, etc).
-
+ * Code intellisense by Ctrl+Space (Python)
 
 Feedback
 ========

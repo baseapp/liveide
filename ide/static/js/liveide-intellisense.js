@@ -17,21 +17,24 @@
 			// token - part of word
 			// pos - {pageX, pageY} position of cursor
 			// ext - file extension
-
 			var menu = $(that.dom.intellisense),
-				list = menu.find("select");
+				list = menu.find("select"),
+				has_options = false;
 
 			list.html("");
 
 			// TODO: use file extension and appropriate lexemes
-			this.python(list, token);
+			has_options = this.python(list, token);
 
-			menu.css("display", "block")
-				.css("left", pos.pageX + 20)
-				.css("top", pos.pageY)
-				.show();
+			if (has_options)
+				menu.css("display", "block")
+					.css("left", pos.pageX + 20)
+					.css("top", pos.pageY)
+					.show();
 
-			list.focus();
+			//list.focus();
+
+			return has_options;
 		},
 
 		hide: function() {
@@ -41,20 +44,15 @@
 		/* -- Autocompletion rules ----------------------------------------- */
 
 		python: function (list ,token) {
-			var re = new RegExp(token, "gi");
-
-			/* This list taken from https://github.com/ajaxorg/ace-builds/blob/master/src/mode-python.js */
-			var keywords = (
+			var re = new RegExp(token, "gi"),
+			has_options = false,
+				keywords = ( /* This list taken from https://github.com/ajaxorg/ace-builds/blob/master/src/mode-python.js */
 		        "and|as|assert|break|class|continue|def|del|elif|else|except|exec|" +
 		        "finally|for|from|global|if|import|in|is|lambda|not|or|pass|print|" +
-		        "raise|return|try|while|with|yield"
-		    );
-
-		    var builtinConstants = (
-		        "True|False|None|NotImplemented|Ellipsis|__debug__"
-		    );
-
-		    var builtinFunctions = (
+		        "raise|return|try|while|with|yield" +
+		    	
+		    	"True|False|None|NotImplemented|Ellipsis|__debug__" +
+		    
 		        "abs|divmod|input|open|staticmethod|all|enumerate|int|ord|str|any|" +
 		        "eval|isinstance|pow|sum|basestring|execfile|issubclass|print|super|" +
 		        "binfile|iter|property|tuple|bool|filter|len|range|type|bytearray|" +
@@ -66,16 +64,13 @@
 		    );
 
 		    $.each(keywords.split("|"), function(i, v) {
-		    	if (v.search(re) > -1) list.append('<option value="' + v + '">' + v + '</option>');
+		    	if ((v.search(re) > -1) || (!token) || (token == " ")) {
+		    		list.append('<option value="' + v + '">' + v + '</option>');
+		    		has_options = true;
+		    	}
 		    });
 
-		    $.each(builtinConstants.split("|"), function(i, v) {
-		    	if (v.search(re) > -1) list.append('<option value="' + v + '">' + v + '</option>');
-		    });
-
-		    $.each(builtinFunctions.split("|"), function(i, v) {
-		    	if (v.search(re) > -1) list.append('<option value="' + v + '">' + v + '</option>');
-		    });
+		    return has_options;
 		}
 	}
 

@@ -115,9 +115,12 @@
                                 <li><a href="#" class="liveide-edit-command" data-id="copy">Copy</a></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="paste">Paste</a></li>
                                 <li class="divider"></li>
+                                <li><a href="#" class="liveide-edit-intellisense" data-id="find">Show Completions (Ctrl+Space)</a></li>
+                                <li class="divider"></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="find">Find</a></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="findnext">Find Next</a></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="findprevious">Find Previous</a></li>
+                                <li class="divider"></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="replace">Replace</a></li>
                                 <li><a href="#" class="liveide-edit-command" data-id="replaceall">Replace all</a></li>
                             </ul>
