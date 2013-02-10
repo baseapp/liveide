@@ -43,7 +43,7 @@ IDE Features
  * Upload existing projects into IDE
  * Run file with python interpreter on server and display output and errors in IDE console.
  * Edit files with Ace editor (syntax highlighing, code formatting, etc).
- * Code intellisense by Ctrl+Space (Python)
+ * Code intellisense by Ctrl+Space / Ctrl+Shift+Space (Python)
 
 Feedback
 ========

@@ -833,7 +833,7 @@
                 if (!ed) return;
 
                 if (val) {
-                    if (token && token.value != " ")
+                    if (token && token.value.replace(/^\s+|\s+$/g, '') != "")
                         ed.editor.selection.selectWordLeft();
                     ed.editor.insert(val, true);
                 }
@@ -843,8 +843,9 @@
             }
 
             /* -- SHOW INTELLISENSE ---------------------------------------- */
+            // Ctrl + Space / Shift + Space
             $(document).on("keypress", ".liveide-editors", function (e) {
-                if (!(e.which == 0 && e.ctrlKey)) return true;
+                if (!(e.which == 0 && e.ctrlKey) && !(e.which == 64 && e.ctrlKey && e.shiftKey)) return true;
                 intellisense_show();
             });
 

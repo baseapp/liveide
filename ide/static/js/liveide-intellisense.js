@@ -24,7 +24,7 @@
 			list.html("");
 
 			// TODO: use file extension and appropriate lexemes
-			has_options = this.python(list, token);
+			has_options = this.python(list, token.replace(/^\s+|\s+$/g, '')); //trim spaces in token
 
 			if (has_options)
 				menu.css("display", "block")
