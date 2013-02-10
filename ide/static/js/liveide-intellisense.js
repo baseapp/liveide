@@ -26,11 +26,11 @@
 			// TODO: use file extension and appropriate lexemes
 			has_options = this.python(list, token.replace(/^\s+|\s+$/g, '')); //trim spaces in token
 
-			if (has_options)
-				menu.css("display", "block")
-					.css("left", pos.pageX + 20)
-					.css("top", pos.pageY)
-					.show();
+			//if (has_options)
+			menu.css("display", "block")
+				.css("left", pos.pageX + 20)
+				.css("top", pos.pageY)
+				.show();
 
 			//list.focus();
 
