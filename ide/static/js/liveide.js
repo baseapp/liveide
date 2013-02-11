@@ -845,7 +845,7 @@
             /* -- SHOW INTELLISENSE ---------------------------------------- */
             // Ctrl + Space / Shift + Space
             $(document).on("keypress", ".liveide-editors", function (e) {
-                if (!(e.which == 0 && e.ctrlKey) && !(e.which == 64 && e.ctrlKey && e.shiftKey)) return true;
+                if (!(e.which == 32 && e.ctrlKey) && !(e.which == 32 && e.ctrlKey && e.shiftKey)) return true;
                 intellisense_show();
             });
 
