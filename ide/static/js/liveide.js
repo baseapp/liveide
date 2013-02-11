@@ -845,19 +845,27 @@
             /* -- SHOW INTELLISENSE ---------------------------------------- */
             // Ctrl + Space / Shift + Space
             $(document).on("keypress", ".liveide-editors", function (e) {
-                if (!(e.which == 32 && e.ctrlKey) && !(e.which == 32 && e.ctrlKey && e.shiftKey)) return true;
+                var key = e.which ? e.which : e.keyCode; // crossbrowser solution for pressed key
+                if (!(key == 32 && e.ctrlKey) && !(key == 32 && e.ctrlKey && e.shiftKey)) return true;
+
                 intellisense_show();
+
+                return false;
             });
 
             // Intellisense already visible - let filter while user input
             $(document).on("keyup", ".liveide-editors", function (e) {
                 var menu = $(that.dom.intellisense),
                     list = menu.find("select"),
-                    ed = that.active.editor;
+                    ed = that.active.editor,
+                    key = e.which ? e.which : e.keyCode;
+
+                // Check if completion box is opened
+                // exit if it hidden
                 if (menu.css("display") != "block") return;
 
                 // Left/RightUp/Down arrows - focus intellisense list
-                if (e.which == 37 || e.which == 38 || e.which == 39 || e.which == 40) {
+                if (key == 37 || key == 38 || key == 39 || key == 40) {
                     ed.editor.moveCursorToPosition(that.cursorPos);
                     list.focus().prop("selectedIndex", 0);
                 } else
@@ -867,7 +875,11 @@
             /* -- SELECT VALUE IN LIST ------------------------------------- */
             // ... by Space / Enter button
             $(document).on("keypress", that.dom.intellisense + " select", function (e) {
-                if (!(e.which == 32 || e.which == 13)) return true; //space or enter
+                var key = e.which ? e.which : e.keyCode;
+
+                // Exit if nore Space nor Enter was pressed
+                if (!(key == 32 || key == 13)) return true;
+
                 intellisense_select();
             });
 
@@ -879,8 +891,10 @@
             /* -- HIDE INTELLISENSE ---------------------------------------- */
             // ESC key - hide intellisense list
             $(document).on("keydown", function (e) {
-                if (!(e.which == 27)) return true;
-                if (!that.intellisense) return true;
+                var key = e.which ? e.which : e.keyCode;
+
+                // Exit if not Esc key was pressed
+                if (!(key == 27)) return true;
 
                 var ed = that.active.editor;
                 if (ed) ed.editor.focus();
@@ -892,8 +906,6 @@
 
             // Click in editor - hide intellisense list
             $(document).on("click", ".liveide-editors", function (e) {
-                if (!that.intellisense) return true;
-
                 var ed = that.active.editor;
                 if (ed) ed.editor.focus();
 
