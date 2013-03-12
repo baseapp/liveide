@@ -833,7 +833,7 @@
                 if (!ed) return;
 
                 if (val) {
-                    if (token && token.value.replace(/^\s+|\s+$/g, '') != "")
+                    if (token && token.value.replace(/^\s+|\s+$/g, '') != "" && token.value != ".")
                         ed.editor.selection.selectWordLeft();
                     ed.editor.insert(val, true);
                 }
@@ -843,14 +843,14 @@
             }
 
             /* -- SHOW INTELLISENSE ---------------------------------------- */
-            // Ctrl + Space / Shift + Space
+            // Ctrl + Space / Shift + Space / "."
             $(document).on("keypress", ".liveide-editors", function (e) {
                 var key = e.which ? e.which : e.keyCode; // crossbrowser solution for pressed key
-                if (!(key == 32 && e.ctrlKey) && !(key == 32 && e.ctrlKey && e.shiftKey)) return true;
+                if (!(key == 32 && e.ctrlKey) && !(key == 32 && e.ctrlKey && e.shiftKey) && !(key == 46)) return true;
 
                 intellisense_show();
 
-                return false;
+                return (key == 46);
             });
 
             // Intellisense already visible - let filter while user input
